@@ -10,27 +10,24 @@ namespace kNN
 {
     class DataSet
     {
-        private T DeepClone<T>(T obj)
+        public DataSet(Dictionary<string, List<List<string>>> test, int k)
         {
-            T objResult;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, obj);
-                ms.Position = 0;
-                objResult = (T)bf.Deserialize(ms);
-            }
-            return objResult;
+            this.test = test;
+            train = DeepClone(test);
+            CreateKBlocks(k);
         }
 
+        /// <summary>
+        /// Display analysed information about the data set.
+        /// </summary>
         public void outputDataSetInfo()
         {
             var sortedTestData = new SortedDictionary<string, List<List<string>>>(test);
             var sum = 0;
-            foreach(var el in sortedTestData)
+            foreach(var category in sortedTestData)
             {
-                Console.WriteLine("Elements in \"" + el.Key + "\" : " + el.Value.Count);
-                sum += el.Value.Count;
+                Console.WriteLine("Elements in \"" + category.Key + "\" : " + category.Value.Count);
+                sum += category.Value.Count;
             }
             Console.WriteLine("Elements in sum: " + sum);
             _dataSum = sum;
@@ -42,6 +39,7 @@ namespace kNN
         private List<List<string>>[] blocks;
         private int _dataSum = 0;
         private int _differentClasses = 0;
+
         private int DifferentClasses
         {
             get
@@ -65,14 +63,31 @@ namespace kNN
             }
         }
 
-        public DataSet(Dictionary<string, List<List<string>>> test, int k)
-        {
-            this.test = test;
-            train = DeepClone(test);
-            CreateKBlocks(k);
-        }
+        /// <summary>
+        /// Prouces an exact copy of an object.
+        /// </summary>
+        /// <returns>The Cloned Object</returns>
+        /// <param name="obj">Any object one wishes to clone</param>
+		private T DeepClone<T>(T obj)
+		{
+			T objResult;
+			using (MemoryStream ms = new MemoryStream())
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				bf.Serialize(ms, obj);
+				ms.Position = 0;
+				objResult = (T)bf.Deserialize(ms);
+			}
+			return objResult;
+		}
 
-        private void CreateKBlocks(int k)
+        /// <summary>
+        /// Distribute all instances of data over "k" amount of data-blocks.
+        /// The instances are distributed in a way that retains
+        /// the relativity in category occurences found when observing the whole set.
+        /// </summary>
+        /// <param name="k">Number of Blocks to distribute data over.</param>
+		private void CreateKBlocks(int k)
         {
             if (train == null) throw new Exception("train Dataset was null!");
             if (test == null) throw new Exception("test Dataset was null!");
