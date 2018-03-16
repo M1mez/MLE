@@ -53,7 +53,7 @@ namespace kNN
                 string[] lines = File.ReadAllLines(file).Skip(1).ToArray();
                 string[][] parts = new string[lines.Length][];
 
-				char seperator = GetSeperator(lines[0]);
+				        char seperator = GetSeperator(lines[0]);
                 for (int i = 0; i < lines.Length; i++)
                 {
                     parts[i] = lines[i].Split(seperator);

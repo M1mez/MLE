@@ -8,113 +8,111 @@ using System.Threading.Tasks;
 
 namespace kNN
 {
-    class DataSet
-    {
+	class DataSet
+	{
+		/*
         public DataSet(Dictionary<string, List<List<string>>> test, int k)
         {
-            this.test = test;
-            train = DeepClone(test);
-            CreateKBlocks(k);
-        }
-
-        /// <summary>
-        /// Display analysed information about the data set.
-        /// </summary>
-        public void outputDataSetInfo()
-        {
-            var sortedTestData = new SortedDictionary<string, List<List<string>>>(test);
-            var sum = 0;
-            foreach(var category in sortedTestData)
-            {
-                Console.WriteLine("Elements in \"" + category.Key + "\" : " + category.Value.Count);
-                sum += category.Value.Count;
-            }
-            Console.WriteLine("Elements in sum: " + sum);
-            _dataSum = sum;
-            _differentClasses = test.Count;
-        }
-
-        private Dictionary<string, List<List<string>>> train;
-        private Dictionary<string, List<List<string>>> test;
-        private List<List<string>>[] blocks;
-        private int _dataSum = 0;
-        private int _differentClasses = 0;
-
-        private int DifferentClasses
-        {
-            get
-            {
-                if (_differentClasses <= 0) _differentClasses = test.Count;
-                return _differentClasses;
-            }
-        }
-        private int DataSum {
-            get {
-                if (_dataSum <= 0)
-                {
-                    var sum = 0;
-                    foreach (var el in test)
-                    {
-                        sum += el.Value.Count;
-                    }
-                    _dataSum = sum;
-                }
-                return _dataSum;
-            }
-        }
-
-        /// <summary>
-        /// Prouces an exact copy of an object.
-        /// </summary>
-        /// <returns>The Cloned Object</returns>
-        /// <param name="obj">Any object one wishes to clone</param>
-		private T DeepClone<T>(T obj)
+            //this.test = test;
+            //train = DeepClone(test);
+            //CreateKBlocks(k);
+        }*/
+		public DataSet()
 		{
-			T objResult;
-			using (MemoryStream ms = new MemoryStream())
-			{
-				BinaryFormatter bf = new BinaryFormatter();
-				bf.Serialize(ms, obj);
-				ms.Position = 0;
-				objResult = (T)bf.Deserialize(ms);
-			}
-			return objResult;
+
 		}
 
-        /// <summary>
-        /// Distribute all instances of data over "k" amount of data-blocks.
-        /// The instances are distributed in a way that retains
-        /// the relativity in category occurences found when observing the whole set.
-        /// </summary>
-        /// <param name="k">Number of Blocks to distribute data over.</param>
-		private void CreateKBlocks(int k)
-        {
-            if (train == null) throw new Exception("train Dataset was null!");
-            if (test == null) throw new Exception("test Dataset was null!");
-            outputDataSetInfo();
-            int blockSize = DataSum / k;
-            int perBlock = 0;
-            int rnd;
-            blocks = new List<List<string>>[k];
+		/// <summary>
+		/// Reads in data file and constructs data Instances.
+		/// First Line must contain Parameter Names
+		/// </summary>
+		/// <param name="DataFile">Path to the data file</param>
+		public void ReadFile(string DataFile)
+		{
+			if (File.Exists(DataFile))
+			{
+				string[] lines = File.ReadAllLines(DataFile).ToArray();
+				SetSeperator(lines[0]);
+				int startIndex = SetAttributeNames(lines[0]);
 
-            Console.WriteLine("DataSum : " + DataSum + " k " + k + " blockSize: " + blockSize);
+				for (int i = startIndex; i < lines.Length; i++)
+				{
+					string[] dataCells = lines[1].Split(Seperator);
+					AddInstance(dataCells, true, -1);
+				}
+			}
+		}
 
-            foreach (var element in test)
-            {
-                perBlock = element.Value.Count / k;
-                Console.WriteLine(" valueCount " + element.Value.Count + " perBlock: " + perBlock);
-                for (var idx = 0; idx < k; idx++)
-                {
-                    if (element.Value == null) continue;
-                    for (int per = 0; per < perBlock; per++)
-                    {
-                        rnd = Constants.randomInt(element.Value);
-                        if (blocks[idx] == null) blocks[idx] = new List<List<string>>() { element.Value[rnd] };
-                        else blocks[idx].Add(element.Value[rnd]);
-                        element.Value.RemoveAt(rnd);
-                    }
-                }
-            }
-        }
-    }
+		/// <summary>
+		/// Add Instance to Dataset
+		/// </summary>
+		/// <param name="dataCells">All values of the unique cells of the row.</param>
+		/// <param name="shouldSetCategory">Indicated if public string category should be set</param>
+		/// <param name="index">Index of dataCells that points to category. Default is last element.</param>
+		public void AddInstance(string[] dataCells, bool shouldSetCategory, int index = -1)
+		{
+			if (dataCells.Length == ColoumnCount)
+			{
+				DataInstances.Add(new DataInstance(dataCells, shouldSetCategory, index));
+			}
+			else
+			{
+				string error = "Data file coloumn Length is inconsistent! Encountered at Data Row Number:" + DataInstances.Count;
+				throw new ArgumentException(error);
+			}
+		}
+
+		public Dictionary<int, string> AttributeNames = new Dictionary<int, string>();
+		public List<DataInstance> DataInstances = new List<DataInstance>();
+		private int ColoumnCount = 0; //used to check consistency of row length throughout data file.
+		private char[] Seperator = new char[1]; //Data cell seperator
+
+		/// <summary>
+		/// Retrieves character used to seperate Data fields in the File.
+		/// </summary>
+		/// <returns>The seperating character</returns>
+		/// <param name="sampleRow">Sample row of the Data Set</param>
+		private void SetSeperator(string sampleRow)
+		{
+			char[] seperators = { ',', ';' };
+			foreach (char c in sampleRow)
+			{
+				if (seperators.Contains(c))
+				{
+					Seperator[0] = c;
+				}
+			}
+			throw new ArgumentException("Seperator could not be extracted from sampleRow given.");
+		}
+
+		/// <summary>
+		/// Checks if first row contains strings and sets Attribute names accordingly
+		/// </summary>
+		/// <param name="firstRow"></param>
+		/// <returns>0 if no attribute-name row was given, 1 if it has been read succesfully</returns>
+		private int SetAttributeNames(string firstRow)
+		{
+			string[] splitCells = firstRow.Split(Seperator);
+			char[] stringIndicators = {'"'};
+
+			if (firstRow.StartsWith("\""))
+			{
+				foreach(string name in splitCells)
+				{
+					AttributeNames.Add(ColoumnCount, name.Trim(stringIndicators));
+					ColoumnCount++;
+				}
+				return 1;
+			}
+			else
+			{
+				ColoumnCount = splitCells.Length;
+				for (int i = 0; i < ColoumnCount; i++)
+				{
+					AttributeNames.Add(ColoumnCount, ("Attribute " + ColoumnCount));
+				}
+				return 0;
+			}
+		}
+	}
 }

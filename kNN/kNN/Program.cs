@@ -19,9 +19,16 @@ namespace kNN
 
             //Read data
             var sortedCsv = CSVHandle.Read(DataFile);
-            //var csvList = CSVHandle.GetSortedCSV(@"O:\FH\MLE\iris.data.csv");
 
+            //create Dataset
             var dataSet = new DataSet(sortedCsv, 5);
+
+            //var csvList = CSVHandle.GetSortedCSV(@"O:\FH\MLE\iris.data.csv");
+            DataSet.Normalize();
+
+            //Normalize Data.
+
+
 
             Console.WriteLine("That many different Types: " + sortedCsv.Count);
             Console.Read();
