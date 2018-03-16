@@ -8,6 +8,54 @@ namespace kNN
 {
   class knnAlgorithm
   {
+        public knnAlgorithm(DataSet data)
+        {
+            fullDataSet = data;
+        }
+
+        /// <summary>
+        /// Mapps all values in fullDataSet between 0 and 1;
+        /// Simple Rescaling is used.
+        /// </summary>
+        public void Normalize()
+        {
+            int coloumns = fullDataSet.ColoumnCount - 1;
+
+            //min and max for each attribute coloumn.
+            float[] min = new float[coloumns];
+            float[] max = new float[coloumns];
+
+            //get min and max values for each coloumn
+            foreach (DataInstance row in fullDataSet.DataInstances)
+            {
+                for (int i = 0; i < coloumns; i++)
+                {
+                    if(row.DataVector[i] < min[i])
+                    {
+                        min[i] = row.DataVector[i];
+                    }
+
+					else if (row.DataVector[i] > max[i])
+					{
+                        max[i] = row.DataVector[i];
+					}
+                }
+            }
+
+            //normalize each value
+			foreach (DataInstance row in fullDataSet.DataInstances)
+			{
+				for (int i = 0; i < coloumns; i++)
+				{
+                    Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
+                    row.DataVector[i] = ((row.DataVector[i] - min[i]) / (max[i] - min[i]));
+                    Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
+				}
+			}
+        }
+
+
+        private DataSet fullDataSet;
     /*
     /// <summary>
     /// Prouces an exact copy of an object.
@@ -64,7 +112,7 @@ namespace kNN
     }
 
     */
-
+        /*
     /// <summary>
     /// Display analysed information about the data set.
     /// </summary>
@@ -113,5 +161,6 @@ namespace kNN
         return _dataSum;
       }
     }
+        */
   }
 }

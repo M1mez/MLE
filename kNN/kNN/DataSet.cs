@@ -37,8 +37,8 @@ namespace kNN
 
 				for (int i = startIndex; i < lines.Length; i++)
 				{
-					string[] dataCells = lines[1].Split(Seperator);
-					AddInstance(dataCells, true, -1);
+					string[] dataCells = lines[i].Split(Seperator);
+					AddInstance(dataCells, true);
 				}
 			}
 		}
@@ -53,18 +53,18 @@ namespace kNN
 		{
 			if (dataCells.Length == ColoumnCount)
 			{
-				DataInstances.Add(new DataInstance(dataCells, shouldSetCategory, index));
+				DataInstances.Add(new DataInstance(dataCells, shouldSetCategory));
 			}
 			else
 			{
-				string error = "Data file coloumn Length is inconsistent! Encountered at Data Row Number:" + DataInstances.Count;
-				throw new ArgumentException(error);
+                Console.WriteLine("Data instance has to few or too many Attributes! Skipped data instance near row number {0}", DataInstances.Count);
 			}
 		}
 
 		public Dictionary<int, string> AttributeNames = new Dictionary<int, string>();
-		public List<DataInstance> DataInstances = new List<DataInstance>();
-		private int ColoumnCount = 0; //used to check consistency of row length throughout data file.
+        public List<DataInstance> DataInstances = new List<DataInstance>(); //all Rows of the data table read.
+
+        public int ColoumnCount { get; private set; } = 0; //used to check consistency of row length throughout data file.
 		private char[] Seperator = new char[1]; //Data cell seperator
 
 		/// <summary>
@@ -80,6 +80,7 @@ namespace kNN
 				if (seperators.Contains(c))
 				{
 					Seperator[0] = c;
+                    return;
 				}
 			}
 			throw new ArgumentException("Seperator could not be extracted from sampleRow given.");
@@ -95,7 +96,7 @@ namespace kNN
 			string[] splitCells = firstRow.Split(Seperator);
 			char[] stringIndicators = {'"'};
 
-			if (firstRow.StartsWith("\""))
+            if (firstRow.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase))
 			{
 				foreach(string name in splitCells)
 				{
@@ -109,7 +110,7 @@ namespace kNN
 				ColoumnCount = splitCells.Length;
 				for (int i = 0; i < ColoumnCount; i++)
 				{
-					AttributeNames.Add(ColoumnCount, ("Attribute " + ColoumnCount));
+					AttributeNames.Add(i, ("Attribute " + ColoumnCount));
 				}
 				return 0;
 			}

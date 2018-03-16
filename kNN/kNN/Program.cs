@@ -11,26 +11,28 @@ namespace kNN
     {
         static void Main(string[] args)
         {
-            string FileName = "winequality-white.csv";
-			//string FileName = "iris.data.txt";
+            //string FileName = "winequality-white.csv";
+			string FileName = "iris.data.txt";
 
             // Place data files insinde the build directory
-            string DataFile = Path.Combine(Directory.GetCurrentDirectory(), FileName);
+            string dataFile = Path.Combine(Directory.GetCurrentDirectory(), FileName);
 
             //Read data
-            var sortedCsv = CSVHandle.Read(DataFile);
+            var sortedCsv = CSVHandle.Read(dataFile);
 
             //create Dataset
-            var dataSet = new DataSet(sortedCsv, 5);
+            var dataSet = new DataSet();
+            dataSet.ReadFile(dataFile);
 
             //var csvList = CSVHandle.GetSortedCSV(@"O:\FH\MLE\iris.data.csv");
-            DataSet.Normalize();
+            knnAlgorithm kNNSearch = new knnAlgorithm(dataSet);
 
             //Normalize Data.
+			kNNSearch.Normalize();
 
 
 
-            Console.WriteLine("That many different Types: " + sortedCsv.Count);
+            //Console.WriteLine("That many different Types: " + sortedCsv.Count);
             Console.Read();
         }
     }
