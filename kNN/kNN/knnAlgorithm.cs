@@ -6,122 +6,119 @@ using System.Threading.Tasks;
 
 namespace kNN
 {
-  class knnAlgorithm
-  {
-        public knnAlgorithm(DataSet data)
-        {
-            fullDataSet = data;
+	class knnAlgorithm
+	{
+		public knnAlgorithm(DataSet data)
+		{
+			fullDataSet = data;
 			this.Normalize();
 
 
 			//At Least one Element of each Category should be in each K
 			int minOfCategoryCounter = 10;
-			foreach(var categoryList in DataSet.CategoryInstances)
+			foreach (var categoryList in DataSet.CategoryInstances)
 			{
-				if(categoryList.Count < minOfCategoryCounter)
+				if (categoryList.Count < minOfCategoryCounter)
 				{
 					minOfCategoryCounter = (categoryList.Count);
 				}
 			}
 			this.PrepareKFoldCrossValidation(minOfCategoryCounter);
-
 		}
 
-        /// <summary>
-        /// Mapps all values in fullDataSet between 0 and 1;
-        /// Simple Rescaling is used.
-        /// </summary>
-        private void Normalize()
-        {
-            int coloumns = DataSet.ColoumnCount - 1;
+		/// <summary>
+		/// Cross Validate using the prepared kFolds
+		/// </summary>
+		public void testData()
+		{
+			foreach(var testblock in kFoldPackages)
+			{
 
-            //min and max for each attribute coloumn.
-            float[] min = new float[coloumns];
-            float[] max = new float[coloumns];
+			}
+		}
 
-            //get min and max values for each coloumn
-            foreach (DataInstance row in fullDataSet.DataInstances)
-            {
-                for (int i = 0; i < coloumns; i++)
-                {
-                    if(row.DataVector[i] < min[i])
-                    {
-                        min[i] = row.DataVector[i];
-                    }
+		/// <summary>
+		/// Mapps all values in fullDataSet between 0 and 1;
+		/// Simple Rescaling is used.
+		/// </summary>
+		private void Normalize()
+		{
+			int coloumns = DataSet.ColoumnCount - 1;
 
-					else if (row.DataVector[i] > max[i])
-					{
-                        max[i] = row.DataVector[i];
-					}
-                }
-            }
+			//min and max for each attribute coloumn.
+			float[] min = new float[coloumns];
+			float[] max = new float[coloumns];
 
-            //normalize each value
+			//get min and max values for each coloumn
 			foreach (DataInstance row in fullDataSet.DataInstances)
 			{
 				for (int i = 0; i < coloumns; i++)
 				{
-                    Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
-                    row.DataVector[i] = ((row.DataVector[i] - min[i]) / (max[i] - min[i]));
-                    Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
+					if (row.DataVector[i] < min[i])
+					{
+						min[i] = row.DataVector[i];
+					}
+
+					else if (row.DataVector[i] > max[i])
+					{
+						max[i] = row.DataVector[i];
+					}
 				}
 			}
-        }
 
+			//normalize each value
+			foreach (DataInstance row in fullDataSet.DataInstances)
+			{
+				for (int i = 0; i < coloumns; i++)
+				{
+					Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
+					row.DataVector[i] = ((row.DataVector[i] - min[i]) / (max[i] - min[i]));
+					Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
+				}
+			}
+		}
 
-        private DataSet fullDataSet;
-    /*
-    /// <summary>
-    /// Prouces an exact copy of an object.
-    /// </summary>
-    /// <returns>The Cloned Object</returns>
-    /// <param name="obj">Any object one wishes to clone</param>
-    private T DeepClone<T>(T obj)
-    {
-      T objResult;
-      using (MemoryStream ms = new MemoryStream())
-      {
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(ms, obj);
-        ms.Position = 0;
-        objResult = (T)bf.Deserialize(ms);
-      }
-      return objResult;
-    }
-	*/
-    /// <summary>
-    /// Distribute all instances of data over "k" amount of data-blocks.
-    /// The instances are distributed in a way that retains
-    /// the relativity in category occurences found when observing the whole set.
-    /// </summary>
-    /// <param name="k">Number of Blocks to distribute data over.</param>
-    private void PrepareKFoldCrossValidation(int k)
-    {
+		private List<List<DataInstance>> kFoldPackages = new List<List<DataInstance>>();
+
+		private DataSet fullDataSet;
+
+		/// <summary>
+		/// Distribute all instances of data over "k" amount of data-blocks.
+		/// The instances are distributed in a way that retains
+		/// the relativity in category occurences found when observing the whole set.
+		/// </summary>
+		/// <param name="k">Number of Blocks to distribute data over.</param>
+		private void PrepareKFoldCrossValidation(int k)
+		{
+			Random rndNumber = new Random();
+			//copy to prevent damage to original list, when removing elements later.
+			List<List<DataInstance>> sortedInstances = DataSet.CategoryInstances;
+
+			for (int i = 0; i < k; i++)
+			{
+				kFoldPackages.Add(new List<DataInstance>());
+			}
+
+			foreach (var categoryList in sortedInstances)
+			{
+				int numberOfElements = categoryList.Count;
+				int elementsPerBlock = numberOfElements / k;
+
+				for (int i = 0; i < k; i++)
+				{
+					for (int y = 0; y < elementsPerBlock; y++)
+					{
+						int elementIndex = rndNumber.Next(0, numberOfElements - y);
+
+						kFoldPackages[i].Add(categoryList[elementIndex]);
+						categoryList.RemoveAt(elementIndex);
+					}
+					numberOfElements -= elementsPerBlock;
+				}
+			}
+		}
+
 		/*
-      int blockSize = DataSum / k;
-      int perBlock = 0;
-      int rnd;
-      blocks = new List<List<string>>[k];
-
-      foreach (var element in test)
-      {
-        perBlock = element.Value.Count / k;
-        Console.WriteLine(" valueCount " + element.Value.Count + " perBlock: " + perBlock);
-        for (var idx = 0; idx < k; idx++)
-        {
-          if (element.Value == null) continue;
-          for (int per = 0; per < perBlock; per++)
-          {
-            rnd = Constants.randomInt(element.Value);
-            if (blocks[idx] == null) blocks[idx] = new List<List<string>>() { element.Value[rnd] };
-            else blocks[idx].Add(element.Value[rnd]);
-            element.Value.RemoveAt(rnd);
-          }
-        }
-      }
-	  */
-    }
-        /*
     /// <summary>
     /// Display analysed information about the data set.
     /// </summary>
@@ -171,5 +168,5 @@ namespace kNN
       }
     }
         */
-  }
+	}
 }
