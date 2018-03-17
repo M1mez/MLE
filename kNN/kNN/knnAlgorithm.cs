@@ -16,11 +16,11 @@ namespace kNN
 
 			//At Least one Element of each Category should be in each K
 			int minOfCategoryCounter = 10;
-			foreach(var categoryCounter in DataInstance.CategoriesInstancesCounter)
+			foreach(var categoryList in DataSet.CategoryInstances)
 			{
-				if(categoryCounter.Value < minOfCategoryCounter)
+				if(categoryList.Count < minOfCategoryCounter)
 				{
-					minOfCategoryCounter = categoryCounter.Value;
+					minOfCategoryCounter = (categoryList.Count);
 				}
 			}
 			this.PrepareKFoldCrossValidation(minOfCategoryCounter);

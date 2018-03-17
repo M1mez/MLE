@@ -99,28 +99,28 @@ namespace kNN
 		private int SetAttributeNames(string firstRow)
 		{
 			string[] splitCells = firstRow.Split(Seperator);
+			ColoumnCount = splitCells.Length;
 			char[] stringIndicators = { '"' };
 
 			if (firstRow.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase))
 			{
 				foreach (string name in splitCells)
 				{
-					AttributeNames.Add(ColoumnCount, name.Trim(stringIndicators));
-					ColoumnCount++; //sadfsdf
+					AttributeNames.Add(name.Trim(stringIndicators));
+					Console.WriteLine("Detected attribute coloumn: {0}", name);
 				}
+
 				return 1;
 			}
 			else
 			{
-				ColoumnCount = splitCells.Length;
 				for (int i = 0; i < ColoumnCount; i++)
 				{
-					AttributeNames.Add(i, ("Attribute " + ColoumnCount));
+					AttributeNames.Add(("Attribute " + i));
+					Console.WriteLine("Detected attribute coloumn: Attribute {0}", i);
 				}
 				return 0;
 			}
-
-			foreach (string name in A)
 		}
 	}
 }
