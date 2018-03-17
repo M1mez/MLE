@@ -12,22 +12,23 @@ namespace kNN
 	    private readonly int _dimensionSize = DataSet.Categories.Count;
 
         // find longest string in AttributeNames to be able to display matrix properly, + 1 for better distinction between attributes
-	    private int _longestAttributeLength = DataSet.AttributeNames.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length + 1;
+	    private int _longestCatStringLength = DataSet.Categories.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length + 1;
 	    public float Accuracy { get; set; }
 
         public void PrintMatrix()
-	    {
+        {
+            var format = "{0,-" + _longestCatStringLength + "}";
             //print space x times
-            Console.Write(new string(' ', _longestAttributeLength));
-            foreach (var att in DataSet.AttributeNames) Console.Write(att);
-
+            Console.Write(new string(' ', _longestCatStringLength));
+            foreach (var att in DataSet.Categories) Console.Write(format, att);
+	        Console.WriteLine();
 	        for (var x = 0; x < _dimensionSize; x++)
 	        {
-	            Console.Write(DataSet.AttributeNames[x]);
+	            Console.Write(format, DataSet.Categories[x]);
 	            for (var y = 0; y < _dimensionSize; y++)
 	            {
                     // display number with leading spaces
-	                Console.Write(_matrix[x,y].ToString("D" + _longestAttributeLength.ToString()));
+	                Console.Write(_matrix[x,y].ToString().PadLeft(_longestCatStringLength/2 ).PadRight(_longestCatStringLength));
 	            }
 	            Console.WriteLine();
 	        }

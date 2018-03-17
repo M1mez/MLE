@@ -10,7 +10,7 @@ namespace kNN
     {
         public static Type attrType = typeof(float);
 
-        public static int randomInt<T>(List<T> list)
+        public static int RandomInt<T>(List<T> list)
         {
             Random rnd = new Random();
             return rnd.Next(list.Count);

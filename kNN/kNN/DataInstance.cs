@@ -10,7 +10,7 @@ namespace kNN
 	/// <summary>
 	/// A DataInstance object represents one row in a data table.
 	/// /// </summary>
-	class DataInstance
+	public class DataInstance
 	{
 		/// <summary>
 		/// Pass All values of the unique cells of the row.

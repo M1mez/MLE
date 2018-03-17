@@ -6,34 +6,31 @@ using System.Threading.Tasks;
 
 namespace kNN
 {
-    public class FloatListComparator : IComparer<string>
+    public class FloatListComparator : IComparer<DataInstance>
     {
-        private List<string> candidate;
+        private DataInstance candidate;
 
-        public FloatListComparator(List<string> candidate)
+        public FloatListComparator(DataInstance candidate)
         {
-            this.candidate = candidate.Take(candidate.Count - 1).ToList();
+            this.candidate = candidate;
         }
 
-        public int Compare(List<string> one, List<string> two)
+        public int Compare(DataInstance one, DataInstance two)
         {
-            double dist1 = getDist(one);
-            double dist2 = getDist(two);
+            double dist1 = GetDist(one.DataVector);
+            double dist2 = GetDist(two.DataVector);
 
             if (dist1 > dist2) return 1;
             if (dist1 < dist2) return -1;
             return 0;
         }
 
-        public int Compare(string x, string y) => Compare(new List<string>() { x }, new List<string>() { y });
+        //since only float[] are possible as parameters, this overloaded method is not needed
+        //public int Compare(string x, string y) => Compare(new List<string>() { x }, new List<string>() { y });
 
-        private double getDist(List<string> list)
+        private double GetDist(float[] vector)
         {
-            double addPow = 0.0d;
-            for (int i = 0; i < candidate.Count - 1; i++)
-            {
-                addPow += Math.Pow(float.Parse(list[i]) - float.Parse(candidate[i]), 2);
-            }
+            var addPow = vector.Select((t, i) => Math.Pow(t - candidate.DataVector[i], 2)).Sum();
             return Math.Sqrt(addPow);
         }
     }

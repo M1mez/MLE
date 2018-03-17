@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace kNN
     {
         static void Main(string[] args)
         {
-            //string FileName = "winequality-white.csv";
-			string FileName = "iris.data.txt";
+            string FileName = "winequality-white.csv";
+            //string FileName = "iris.data.txt";
 
             // Place data files insinde the build directory
             string dataFile = Path.Combine(Directory.GetCurrentDirectory(), FileName);
@@ -25,9 +26,20 @@ namespace kNN
             dataSet.ReadFile(dataFile);
 
             //var csvList = CSVHandle.GetSortedCSV(@"O:\FH\MLE\iris.data.csv");
-            knnAlgorithm kNNSearch = new knnAlgorithm(dataSet);
 
-			ConfusionMatrix ConsoleDrawer = new ConfusionMatrix(dataSet);
+            //take time
+            var stopwatch = new Stopwatch();
+            Console.WriteLine("start timer");
+            stopwatch.Start();
+            KnnAlgorithm kNNSearch = new KnnAlgorithm(dataSet);
+            kNNSearch.TestData();
+            stopwatch.Stop();
+            var ts = stopwatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}.{2:00}",
+                ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            Console.WriteLine("time was: {0}", elapsedTime);
+
+            ConfusionMatrix ConsoleDrawer = new ConfusionMatrix(dataSet);
             ConsoleDrawer.PrintMatrix();
             Console.WriteLine(ConsoleDrawer.Accuracy + " is accuracy");
 

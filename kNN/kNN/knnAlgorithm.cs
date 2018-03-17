@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace kNN
 {
-	class knnAlgorithm
+	class KnnAlgorithm
 	{
-		public knnAlgorithm(DataSet data)
+		public KnnAlgorithm(DataSet data)
 		{
 			fullDataSet = data;
-			this.Normalize();
+			//this.Normalize();
 
 
 			//At Least one Element of each Category should be in each K
@@ -29,13 +29,31 @@ namespace kNN
 		/// <summary>
 		/// Cross Validate using the prepared kFolds
 		/// </summary>
-		public void testData()
+		public void TestData()
 		{
 			foreach(var testblock in kFoldPackages)
 			{
-
+			    var restData =  fullDataSet.DataInstances.Except(testblock).ToList();
+                foreach (var candidate in testblock)
+			    {
+                    var comp = new FloatListComparator(candidate);
+			        restData.Sort(comp);
+			        var first10Instances = restData.Take(10).ToList();
+                    candidate.GuessedCategory = MostCommonCategory(first10Instances);
+                }
 			}
 		}
+
+	    private int MostCommonCategory(List<DataInstance> list)
+	    {
+            var mostListedCat = new Dictionary<int, int>();
+            list.ForEach(i =>
+            {
+                if (!mostListedCat.ContainsKey(i.TrueCategory)) mostListedCat[i.TrueCategory] = 1;
+                mostListedCat[i.TrueCategory]++;
+            });
+	        return mostListedCat.FirstOrDefault(x => x.Value == mostListedCat.Values.Max()).Key;
+	    }
 
 		/// <summary>
 		/// Mapps all values in fullDataSet between 0 and 1;
@@ -71,9 +89,9 @@ namespace kNN
 			{
 				for (int i = 0; i < coloumns; i++)
 				{
-					Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
+					//Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
 					row.DataVector[i] = ((row.DataVector[i] - min[i]) / (max[i] - min[i]));
-					Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
+					//Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
 				}
 			}
 		}
