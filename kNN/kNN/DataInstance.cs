@@ -38,7 +38,7 @@ namespace kNN
 				DataVector = new float[(nrOfCells)];
 			}
 		
-			for (int i = 0; i < DataVector.Length - 1; i++)
+			for (int i = 0; i < DataVector.Length; i++)
 			{
 				try
 				{
