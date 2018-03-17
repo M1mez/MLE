@@ -106,7 +106,7 @@ namespace kNN
 				foreach (string name in splitCells)
 				{
 					AttributeNames.Add(ColoumnCount, name.Trim(stringIndicators));
-					ColoumnCount++;
+					ColoumnCount++; //sadfsdf
 				}
 				return 1;
 			}
