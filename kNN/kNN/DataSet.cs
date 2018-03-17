@@ -57,14 +57,19 @@ namespace kNN
 			}
 			else
 			{
-                Console.WriteLine("Data instance has to few or too many Attributes! Skipped data instance near row number {0}", DataInstances.Count);
+				Console.WriteLine("Data instance has to few or too many Attributes! Skipped data instance near row number {0}", DataInstances.Count);
 			}
 		}
 
-		public Dictionary<int, string> AttributeNames = new Dictionary<int, string>();
-        public List<DataInstance> DataInstances = new List<DataInstance>(); //all Rows of the data table read.
+		public static List<string> AttributeNames = new List<string>();
+		public List<DataInstance> DataInstances = new List<DataInstance>(); //all Rows of the data table read.
 
-        public int ColoumnCount { get; private set; } = 0; //used to check consistency of row length throughout data file.
+		//List gets extended if a new Category is found during reading. Index of Categories references same Category in CategoryInstances
+		public static List<string> Categories = new List<string>();
+		public static List<List<DataInstance>> CategoryInstances = new List<List<DataInstance>>();
+
+
+		public static int ColoumnCount { get; private set; } = 0; //used to check consistency of row length throughout data file.
 		private char[] Seperator = new char[1]; //Data cell seperator
 
 		/// <summary>
@@ -80,7 +85,7 @@ namespace kNN
 				if (seperators.Contains(c))
 				{
 					Seperator[0] = c;
-                    return;
+					return;
 				}
 			}
 			throw new ArgumentException("Seperator could not be extracted from sampleRow given.");
@@ -94,11 +99,11 @@ namespace kNN
 		private int SetAttributeNames(string firstRow)
 		{
 			string[] splitCells = firstRow.Split(Seperator);
-			char[] stringIndicators = {'"'};
+			char[] stringIndicators = { '"' };
 
-            if (firstRow.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase))
+			if (firstRow.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase))
 			{
-				foreach(string name in splitCells)
+				foreach (string name in splitCells)
 				{
 					AttributeNames.Add(ColoumnCount, name.Trim(stringIndicators));
 					ColoumnCount++;
@@ -114,6 +119,8 @@ namespace kNN
 				}
 				return 0;
 			}
+
+			foreach (string name in A)
 		}
 	}
 }

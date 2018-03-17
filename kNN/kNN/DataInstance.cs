@@ -51,8 +51,59 @@ namespace kNN
 			}
 		}
 
-		public string Category;
+		//Category of the instance
+		public string Category
+		{
+			get { return this._category; }
+			set
+			{
+				if (!String.IsNullOrEmpty(_category)) decreaseCategoryCounter(_category); //in case someone decides to change already set Category
+
+				_category = value;
+				increaseCategoryCounter(value);
+			}
+		}
+
+		//Category cread from file.
+		public int TrueCategory { get; private set; }
+
+		//Category assigned by Algorithm. LookUp table in DataSet class containing this instance.
+		public int GuessedCategory { get; set; }
+
+		private string _category = null;
+
+		//Attribute values of the instance
 		public readonly float[] DataVector;
+
+		//static map to count objects of all categories
+		public static Dictionary<string, int> CategoriesInstancesCounter = new Dictionary<string, int>();
 		private bool CategoryIsSet;
+
+
+
+
+
+
+		private void increaseCategoryCounter (string categoryOfInstance)
+		{
+			if(CategoriesInstancesCounter.ContainsKey(categoryOfInstance))
+			{
+				CategoriesInstancesCounter[categoryOfInstance]++;
+			}
+			else
+			{
+				CategoriesInstancesCounter.Add(categoryOfInstance, 1);
+			}
+		}
+
+		private void decreaseCategoryCounter (string oldCategoryOfInstance)
+		{
+			CategoriesInstancesCounter[oldCategoryOfInstance]--;
+			if(CategoriesInstancesCounter[oldCategoryOfInstance] < 1)
+			{
+				CategoriesInstancesCounter.Remove(oldCategoryOfInstance);
+			}
+
+		}
 	}
 }

@@ -27,10 +27,7 @@ namespace kNN
             //var csvList = CSVHandle.GetSortedCSV(@"O:\FH\MLE\iris.data.csv");
             knnAlgorithm kNNSearch = new knnAlgorithm(dataSet);
 
-            //Normalize Data.
-			kNNSearch.Normalize();
-
-
+			ConfusionMatrix ConsoleDrawer = new ConfusionMatrix(dataSet);
 
             //Console.WriteLine("That many different Types: " + sortedCsv.Count);
             Console.Read();

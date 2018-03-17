@@ -11,15 +11,29 @@ namespace kNN
         public knnAlgorithm(DataSet data)
         {
             fullDataSet = data;
-        }
+			this.Normalize();
+
+
+			//At Least one Element of each Category should be in each K
+			int minOfCategoryCounter = 10;
+			foreach(var categoryCounter in DataInstance.CategoriesInstancesCounter)
+			{
+				if(categoryCounter.Value < minOfCategoryCounter)
+				{
+					minOfCategoryCounter = categoryCounter.Value;
+				}
+			}
+			this.PrepareKFoldCrossValidation(minOfCategoryCounter);
+
+		}
 
         /// <summary>
         /// Mapps all values in fullDataSet between 0 and 1;
         /// Simple Rescaling is used.
         /// </summary>
-        public void Normalize()
+        private void Normalize()
         {
-            int coloumns = fullDataSet.ColoumnCount - 1;
+            int coloumns = DataSet.ColoumnCount - 1;
 
             //min and max for each attribute coloumn.
             float[] min = new float[coloumns];
@@ -74,24 +88,20 @@ namespace kNN
       }
       return objResult;
     }
-
+	*/
     /// <summary>
     /// Distribute all instances of data over "k" amount of data-blocks.
     /// The instances are distributed in a way that retains
     /// the relativity in category occurences found when observing the whole set.
     /// </summary>
     /// <param name="k">Number of Blocks to distribute data over.</param>
-    private void CreateKBlocks(int k)
+    private void PrepareKFoldCrossValidation(int k)
     {
-      if (train == null) throw new Exception("train Dataset was null!");
-      if (test == null) throw new Exception("test Dataset was null!");
-      outputDataSetInfo();
+		/*
       int blockSize = DataSum / k;
       int perBlock = 0;
       int rnd;
       blocks = new List<List<string>>[k];
-
-      Console.WriteLine("DataSum : " + DataSum + " k " + k + " blockSize: " + blockSize);
 
       foreach (var element in test)
       {
@@ -109,9 +119,8 @@ namespace kNN
           }
         }
       }
+	  */
     }
-
-    */
         /*
     /// <summary>
     /// Display analysed information about the data set.
