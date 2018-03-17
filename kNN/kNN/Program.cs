@@ -28,6 +28,8 @@ namespace kNN
             knnAlgorithm kNNSearch = new knnAlgorithm(dataSet);
 
 			ConfusionMatrix ConsoleDrawer = new ConfusionMatrix(dataSet);
+            ConsoleDrawer.PrintMatrix();
+            Console.WriteLine(ConsoleDrawer.Accuracy + " is accuracy");
 
             //Console.WriteLine("That many different Types: " + sortedCsv.Count);
             Console.Read();
