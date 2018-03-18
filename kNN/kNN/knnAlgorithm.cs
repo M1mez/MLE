@@ -11,7 +11,7 @@ namespace kNN
 		public KnnAlgorithm(DataSet data)
 		{
 			fullDataSet = data;
-			//this.Normalize();
+			this.Normalize();
 
 
 			//At Least one Element of each Category should be in each K
