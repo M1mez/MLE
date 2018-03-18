@@ -17,8 +17,8 @@ namespace kNN
 
         public int Compare(DataInstance one, DataInstance two)
         {
-            double dist1 = GetDist(one.DataVector);
-            double dist2 = GetDist(two.DataVector);
+            double dist1 = GetDist(one.normalizedDataVector);
+            double dist2 = GetDist(two.normalizedDataVector);
 
             if (dist1 > dist2) return 1;
             if (dist1 < dist2) return -1;
@@ -30,7 +30,7 @@ namespace kNN
 
         private double GetDist(float[] vector)
         {
-            var addPow = vector.Select((t, i) => Math.Pow(t - candidate.DataVector[i], 2)).Sum();
+            var addPow = vector.Select((t, i) => Math.Pow(t - candidate.normalizedDataVector[i], 2)).Sum();
             return Math.Sqrt(addPow);
         }
     }

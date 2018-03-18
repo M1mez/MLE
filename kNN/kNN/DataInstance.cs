@@ -12,6 +12,17 @@ namespace kNN
 	/// /// </summary>
 	public class DataInstance
 	{
+		//Category cread from file .LookUp table in DataSet class containing this instance.
+		public int TrueCategory { get; private set; }
+
+		//Category assigned by Algorithm. LookUp table in DataSet class containing this instance.
+		public int GuessedCategory { get; set; }
+
+		//Attribute values of the instance
+		public readonly double[] fileDataVector;
+		public readonly float[] normalizedDataVector;
+		private bool CategoryIsSet;
+		
 		/// <summary>
 		/// Pass All values of the unique cells of the row.
 		/// </summary>
@@ -49,18 +60,20 @@ namespace kNN
 
 				this.TrueCategory = Category;
 
-				DataVector = new float[(nrOfCells - 1)];
+				fileDataVector = new double[(nrOfCells - 1)];
+				normalizedDataVector = new float[(nrOfCells - 1)];
 			}
 			else
 			{
-				DataVector = new float[(nrOfCells)];
+				fileDataVector = new double[(nrOfCells)];
+				normalizedDataVector = new float[(nrOfCells)];
 			}
 		
-			for (int i = 0; i < DataVector.Length; i++)
+			for (int i = 0; i < fileDataVector.Length; i++)
 			{
 				try
 				{
-					DataVector[i] = float.Parse(dataCells[i], CultureInfo.InvariantCulture.NumberFormat);
+					fileDataVector[i] = double.Parse(dataCells[i], CultureInfo.InvariantCulture.NumberFormat);
 				}
 				catch(Exception e)
 				{
@@ -68,15 +81,5 @@ namespace kNN
 				}
 			}
 		}
-
-		//Category cread from file .LookUp table in DataSet class containing this instance.
-		public int TrueCategory { get; private set; }
-
-		//Category assigned by Algorithm. LookUp table in DataSet class containing this instance.
-		public int GuessedCategory { get; set; }
-		
-		//Attribute values of the instance
-		public readonly float[] DataVector;
-		private bool CategoryIsSet;
 	}
 }
