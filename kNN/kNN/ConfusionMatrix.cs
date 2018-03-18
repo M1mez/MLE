@@ -15,26 +15,26 @@ namespace kNN
 	    private int _longestCatStringLength = DataSet.Categories.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length + 1;
 	    public float Accuracy { get; set; }
 
-        public void PrintMatrix()
-        {
-            var format = "{0,-" + _longestCatStringLength + "}";
-            //print space x times
-            Console.Write(new string(' ', _longestCatStringLength));
-            foreach (var att in DataSet.Categories) Console.Write(format, att);
+	    public void PrintMatrix()
+	    {
+	        var format = "{0,-" + _longestCatStringLength + "}";
+	        //print space x times
+	        Console.Write(new string(' ', _longestCatStringLength));
+	        foreach (var att in DataSet.Categories) Console.Write(format, att);
 	        Console.WriteLine();
 	        for (var x = 0; x < _dimensionSize; x++)
 	        {
 	            Console.Write(format, DataSet.Categories[x]);
 	            for (var y = 0; y < _dimensionSize; y++)
 	            {
-                    // display number with leading spaces
-	                Console.Write(_matrix[x,y].ToString().PadLeft(_longestCatStringLength/2 ).PadRight(_longestCatStringLength));
+	                // display number with leading spaces
+	                Console.Write(_matrix[x, y].ToString().PadLeft(_longestCatStringLength / 2).PadRight(_longestCatStringLength));
 	            }
 	            Console.WriteLine();
 	        }
 	    }
 
-		public ConfusionMatrix(DataSet dataSet)
+        public ConfusionMatrix(DataSet dataSet)
 		{
 		    _matrix = new int[_dimensionSize, _dimensionSize];
 		    var instanceSum = dataSet.DataInstances.Count;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace kNN
 		public KnnAlgorithm(DataSet data)
 		{
 			fullDataSet = data;
-			//this.Normalize();
+			this.Normalize();
 
 
 			//At Least one Element of each Category should be in each K
@@ -31,17 +32,25 @@ namespace kNN
 		/// </summary>
 		public void TestData()
 		{
-			foreach(var testblock in kFoldPackages)
+		    var stopwatch = new Stopwatch();
+		    var blockCount = 0;
+
+            foreach (var testblock in kFoldPackages)
 			{
-			    var restData =  fullDataSet.DataInstances.Except(testblock).ToList();
+			    stopwatch.Start();
+                var restData =  fullDataSet.DataInstances.Except(testblock).ToList();
                 foreach (var candidate in testblock)
-			    {
+                {
                     var comp = new FloatListComparator(candidate);
 			        restData.Sort(comp);
 			        var first10Instances = restData.Take(10).ToList();
                     candidate.GuessedCategory = MostCommonCategory(first10Instances);
                 }
-			}
+			    stopwatch.Stop();
+			    var ts = stopwatch.Elapsed;
+			    var elapsedTime = $"{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
+			    Console.WriteLine("Block {0} finished after: {1}", blockCount++, elapsedTime);
+            }
 		}
 
 	    private int MostCommonCategory(List<DataInstance> list)
