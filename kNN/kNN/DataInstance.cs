@@ -30,10 +30,17 @@ namespace kNN
 
 			if (CategoryIsSet)
 			{
-				int Category = DataSet.Categories.IndexOf(dataCells[index]);
+
+				StringBuilder sb = new StringBuilder(DataSet.AttributeNames.Last(), 3);
+				sb.Append(": ");
+				sb.Append(dataCells[index]);
+
+				string cat = sb.ToString();
+				int Category = DataSet.Categories.IndexOf(cat);
 				if(Category == -1)
 				{
-					DataSet.Categories.Add(dataCells[index]);
+				
+					DataSet.Categories.Add(cat);
 					Category = DataSet.Categories.Count - 1;
 
 					DataSet.CategoryInstances.Add(new List<DataInstance>());
