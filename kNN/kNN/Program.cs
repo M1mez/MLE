@@ -12,7 +12,7 @@ namespace kNN
     {
         static void Main(string[] args)
         {
-            string FileName = "winequality-white-10k.csv";
+            string FileName = "winequality-white.csv";
             //string FileName = "iris.data.txt";
 
             // Place data files insinde the build directory
@@ -30,8 +30,8 @@ namespace kNN
             //take time
             var stopwatch = new Stopwatch();
             Console.WriteLine("start timer");
-            stopwatch.Start();
             KnnAlgorithm kNNSearch = new KnnAlgorithm(dataSet);
+            stopwatch.Start();
             kNNSearch.TestData();
             stopwatch.Stop();
             var ts = stopwatch.Elapsed;
