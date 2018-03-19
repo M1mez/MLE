@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace kNN
@@ -32,29 +34,76 @@ namespace kNN
 		/// </summary>
 		public void TestData()
 		{
-		    var stopwatch = new Stopwatch();
-		    var blockCount = 0;
-
+		    var taskList = new List<Thread>();
             foreach (var testblock in kFoldPackages)
-			{
-			    stopwatch.Start();
-                var restData =  fullDataSet.DataInstances.Except(testblock).ToList();
-                foreach (var candidate in testblock)
-                {
-                    var comp = new FloatListComparator(candidate);
-			        restData.Sort(comp);
-			        var first10Instances = restData.Take(10).ToList();
-                    candidate.GuessedCategory = MostCommonCategory(first10Instances);
-                }
-			    stopwatch.Stop();
-			    var ts = stopwatch.Elapsed;
-			    var elapsedTime = $"{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-			    Console.WriteLine("Block {0} finished after: {1}", blockCount++, elapsedTime);
+            {
+                taskList.Add(computeOneBlock(testblock));
             }
-		}
 
-	    private int MostCommonCategory(List<DataInstance> list)
+		    try
+		    {
+		        stopwatch.Start();
+		        taskList.ForEach(x => x.Start());
+		        taskList.ForEach(x => x.Join());
+		        stopwatch.Stop();
+            }
+		    catch (Exception e)
+		    {
+		        Console.WriteLine(e);
+		        Console.Read();
+		    }
+		}
+        
+        private Stopwatch stopwatch = new Stopwatch();
+	    private int blockCount = 0;
+
+	    public class DuplicateKeyComparer<TKey> : IComparer<TKey> where TKey : IComparable
 	    {
+	        public int Compare(TKey x, TKey y)
+	        {
+	            int result = x.CompareTo(y);
+
+	            if (result == 0)
+	                return 1;   // Handle equality as beeing greater
+	            else
+	                return result;
+	        }
+	    }
+
+    private Thread computeOneBlock(List<DataInstance> testBlock)
+	    {
+	        var newCopy = new List<DataInstance>(fullDataSet.DataInstances).Except(testBlock).ToList();
+	        var sortedCopy = new SortedList<float, DataInstance>(new DuplicateKeyComparer<float>());
+	        return new Thread(() =>
+	        {
+	            foreach (var unknown in testBlock)
+	            {
+	                //var comp = new FloatListComparator(candidate);
+
+	                //newCopy.Sort(comp);
+	                foreach (var known in newCopy)
+	                {
+	                    sortedCopy.Add(FloatListComparator.SingleDist(known, unknown), unknown);
+	                }
+	                unknown.GuessedCategory = MostCommonCategorySorted(sortedCopy);
+                }
+
+	            var ts = stopwatch.Elapsed;
+	            var elapsedTime = $"{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
+	            Console.WriteLine("Block {0} finished after: {1}", blockCount++, elapsedTime);
+	        });
+	    }
+
+	    private int MostCommonCategorySorted(SortedList<float, DataInstance> list)
+	    {
+	        return MostCommonCategory(list.Values.ToList());
+
+        }
+
+	    //private Dictionary<int, int> mostListedCat = new Dictionary<int, int>();
+        private int MostCommonCategory(List<DataInstance> list)
+        {
+            if (list.Count > 11) list = list.Take(11).ToList();
             var mostListedCat = new Dictionary<int, int>();
             list.ForEach(i =>
             {

@@ -30,8 +30,19 @@ namespace kNN
 
         private double GetDist(float[] vector)
         {
-            var addPow = vector.Select((t, i) => Math.Pow(t - candidate.DataVector[i], 2)).Sum();
+            //var addPow = vector.Select((t, i) => Math.Pow(t - candidate.DataVector[i], 2)).Sum();
+            var addPow = vector.Select((t, i) => (t - candidate.DataVector[i])*(t - candidate.DataVector[i])).Sum();
             return Math.Sqrt(addPow);
+        }
+
+        public static float SingleDist(DataInstance unknown, DataInstance known)
+        {
+            float addPow = 0;
+            for (var i = 0; i < known.DataVector.Count(); i++)
+            {
+                addPow += (unknown.DataVector[i] - known.DataVector[i]) * (unknown.DataVector[i] - known.DataVector[i]);
+            }
+            return (float) Math.Sqrt(addPow);
         }
     }
 }

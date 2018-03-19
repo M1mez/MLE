@@ -14,8 +14,9 @@ namespace kNN
         // find longest string in AttributeNames to be able to display matrix properly, + 1 for better distinction between attributes
 	    private int _longestCatStringLength = DataSet.Categories.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length + 1;
 	    public float Accuracy { get; set; }
+	    public float realAccuracy { get; set; }
 
-	    public void PrintMatrix()
+        public void PrintMatrix()
 	    {
 	        var format = "{0,-" + _longestCatStringLength + "}";
 	        //print space x times
@@ -56,6 +57,8 @@ namespace kNN
 
 		        _matrix[instance.TrueCategory, instance.GuessedCategory]++;
 		    }
+
+		    realAccuracy = truePos / (truePos + falsePos); 
 		    Accuracy = (truePos + trueNeg) / (truePos + trueNeg + falsePos + falseNeg);
         }
 	}

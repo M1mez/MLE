@@ -12,7 +12,8 @@ namespace kNN
     {
         static void Main(string[] args)
         {
-            string FileName = "winequality-white.csv";
+            //string FileName = "winequality-white.csv";
+            string FileName = "winequality-white-1k.csv";
             //string FileName = "iris.data.txt";
 
             // Place data files insinde the build directory
@@ -42,6 +43,7 @@ namespace kNN
             ConfusionMatrix ConsoleDrawer = new ConfusionMatrix(dataSet);
             ConsoleDrawer.PrintMatrix();
             Console.WriteLine(ConsoleDrawer.Accuracy + " is accuracy");
+            Console.WriteLine(ConsoleDrawer.realAccuracy + " is real accuracy");
 
             //Console.WriteLine("That many different Types: " + sortedCsv.Count);
             Console.Read();
