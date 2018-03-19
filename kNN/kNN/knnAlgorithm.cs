@@ -11,11 +11,13 @@ namespace kNN
 {
 	class KnnAlgorithm
 	{
+		private List<List<DataInstance>> kFoldPackages = new List<List<DataInstance>>();
+		private DataSet fullDataSet;
+
 		public KnnAlgorithm(DataSet data)
 		{
 			fullDataSet = data;
 			this.Normalize();
-
 
 			//At Least one Element of each Category should be in each K
 			int minOfCategoryCounter = 10;
@@ -37,7 +39,7 @@ namespace kNN
 		    var taskList = new List<Thread>();
             foreach (var testblock in kFoldPackages)
             {
-                taskList.Add(computeOneBlock(testblock));
+                taskList.Add(ComputeOneBlock(testblock));
             }
 
 		    try
@@ -70,7 +72,7 @@ namespace kNN
 	        }
 	    }
 
-    private Thread computeOneBlock(List<DataInstance> testBlock)
+    private Thread ComputeOneBlock(List<DataInstance> testBlock)
 	    {
 	        var newCopy = new List<DataInstance>(fullDataSet.DataInstances).Except(testBlock).ToList();
 	        var sortedCopy = new SortedList<float, DataInstance>(new DuplicateKeyComparer<float>());
@@ -108,8 +110,10 @@ namespace kNN
             list.ForEach(i =>
             {
                 if (!mostListedCat.ContainsKey(i.TrueCategory)) mostListedCat[i.TrueCategory] = 1;
-                mostListedCat[i.TrueCategory]++;
+				//else?
+				mostListedCat[i.TrueCategory]++;
             });
+			//default? besser noch einen nächsten dazunehmen und danach beurteilen.
 	        return mostListedCat.FirstOrDefault(x => x.Value == mostListedCat.Values.Max()).Key;
 	    }
 
@@ -122,22 +126,22 @@ namespace kNN
 			int coloumns = DataSet.ColoumnCount - 1;
 
 			//min and max for each attribute coloumn.
-			float[] min = new float[coloumns];
-			float[] max = new float[coloumns];
+			double[] min = new double[coloumns];
+			double[] max = new double[coloumns];
 
 			//get min and max values for each coloumn
 			foreach (DataInstance row in fullDataSet.DataInstances)
 			{
 				for (int i = 0; i < coloumns; i++)
 				{
-					if (row.DataVector[i] < min[i])
+					if (row.fileDataVector[i] < min[i])
 					{
-						min[i] = row.DataVector[i];
+						min[i] = row.fileDataVector[i];
 					}
 
-					else if (row.DataVector[i] > max[i])
+					else if (row.fileDataVector[i] > max[i])
 					{
-						max[i] = row.DataVector[i];
+						max[i] = row.fileDataVector[i];
 					}
 				}
 			}
@@ -147,16 +151,21 @@ namespace kNN
 			{
 				for (int i = 0; i < coloumns; i++)
 				{
+					try
+					{
+
 					//Console.WriteLine("BEFORE: {0}", row.DataVector[i]);
-					row.DataVector[i] = ((row.DataVector[i] - min[i]) / (max[i] - min[i]));
+					row.normalizedDataVector[i] = (float)((row.fileDataVector[i] - min[i]) / (max[i] - min[i]));
 					//Console.WriteLine("AFTER: {0}\n", row.DataVector[i]);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine("Error parsing double value to float after normalizing data value {0}", e);
+						row.normalizedDataVector[i] = 0.0F;
+					}
 				}
 			}
 		}
-
-		private List<List<DataInstance>> kFoldPackages = new List<List<DataInstance>>();
-
-		private DataSet fullDataSet;
 
 		/// <summary>
 		/// Distribute all instances of data over "k" amount of data-blocks.
@@ -193,56 +202,5 @@ namespace kNN
 				}
 			}
 		}
-
-		/*
-    /// <summary>
-    /// Display analysed information about the data set.
-    /// </summary>
-    public void outputDataSetInfo()
-    {
-      var sortedTestData = new SortedDictionary<string, List<List<string>>>(test);
-      var sum = 0;
-      foreach (var category in sortedTestData)
-      {
-        Console.WriteLine("Elements in \"" + category.Key + "\" : " + category.Value.Count);
-        sum += category.Value.Count;
-      }
-      Console.WriteLine("Elements in sum: " + sum);
-      _dataSum = sum;
-      _differentClasses = test.Count;
-    }
-
-    private Dictionary<string, List<List<string>>> train;
-    private Dictionary<string, List<List<string>>> test;
-    private List<List<string>>[] blocks;
-    private int _dataSum = 0;
-    private int _differentClasses = 0;
-
-    private int DifferentClasses
-    {
-      get
-      {
-        if (_differentClasses <= 0) _differentClasses = test.Count;
-        return _differentClasses;
-      }
-    }
-
-    private int DataSum
-    {
-      get
-      {
-        if (_dataSum <= 0)
-        {
-          var sum = 0;
-          foreach (var el in test)
-          {
-            sum += el.Value.Count;
-          }
-          _dataSum = sum;
-        }
-        return _dataSum;
-      }
-    }
-        */
 	}
 }

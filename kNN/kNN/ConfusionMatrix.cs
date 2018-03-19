@@ -13,8 +13,8 @@ namespace kNN
 
         // find longest string in AttributeNames to be able to display matrix properly, + 1 for better distinction between attributes
 	    private int _longestCatStringLength = DataSet.Categories.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length + 1;
-	    public float Accuracy { get; set; }
-	    public float realAccuracy { get; set; }
+	    public string Accuracy { get; set; }
+	    public string RealAccuracy { get; set; }
 
         public void PrintMatrix()
 	    {
@@ -29,9 +29,13 @@ namespace kNN
 	            for (var y = 0; y < _dimensionSize; y++)
 	            {
 	                // display number with leading spaces
+	                if (x == y) Console.ForegroundColor = ConsoleColor.Green;
+                    else if (_matrix[x, y] > 0) Console.ForegroundColor = ConsoleColor.DarkRed;
+	                else Console.ForegroundColor = ConsoleColor.Gray;
 	                Console.Write(_matrix[x, y].ToString().PadLeft(_longestCatStringLength / 2).PadRight(_longestCatStringLength));
 	            }
 	            Console.WriteLine();
+	            Console.ForegroundColor = ConsoleColor.White;
 	        }
 	    }
 
@@ -58,8 +62,8 @@ namespace kNN
 		        _matrix[instance.TrueCategory, instance.GuessedCategory]++;
 		    }
 
-		    realAccuracy = truePos / (truePos + falsePos); 
-		    Accuracy = (truePos + trueNeg) / (truePos + trueNeg + falsePos + falseNeg);
+		    RealAccuracy = (100 * truePos / (truePos + falsePos)).ToString("0.00") + " %"; 
+		    Accuracy = (100 * (truePos + trueNeg) / (truePos + trueNeg + falsePos + falseNeg)).ToString("0.00") + " %";
         }
 	}
 }

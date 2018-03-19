@@ -10,17 +10,17 @@ namespace kNN
 {
 	class DataSet
 	{
-		/*
-        public DataSet(Dictionary<string, List<List<string>>> test, int k)
-        {
-            //this.test = test;
-            //train = DeepClone(test);
-            //CreateKBlocks(k);
-        }*/
-		public DataSet()
-		{
+		public static List<string> AttributeNames = new List<string>(); //LookUp Table for coloumn names
+		public List<DataInstance> DataInstances = new List<DataInstance>(); //all Rows of the data table read.
 
-		}
+		//List gets extended if a new Category is found during reading. Index of Categories references same Category in CategoryInstances
+		public static List<string> Categories = new List<string>(); //tracks catagory names
+		public static List<List<DataInstance>> CategoryInstances = new List<List<DataInstance>>(); //tracks instances of categories
+
+		public static int ColoumnCount { get; private set; } = 0; //used to check consistency of row length throughout data file.
+		private char[] Seperator = new char[1]; //Data cell seperator
+
+		public DataSet() { }
 
 		/// <summary>
 		/// Reads in data file and constructs data Instances.
@@ -60,17 +60,6 @@ namespace kNN
 				Console.WriteLine("Data instance has to few or too many Attributes! Skipped data instance near row number {0}", DataInstances.Count);
 			}
 		}
-
-		public static List<string> AttributeNames = new List<string>();
-		public List<DataInstance> DataInstances = new List<DataInstance>(); //all Rows of the data table read.
-
-		//List gets extended if a new Category is found during reading. Index of Categories references same Category in CategoryInstances
-		public static List<string> Categories = new List<string>();
-		public static List<List<DataInstance>> CategoryInstances = new List<List<DataInstance>>();
-
-
-		public static int ColoumnCount { get; private set; } = 0; //used to check consistency of row length throughout data file.
-		private char[] Seperator = new char[1]; //Data cell seperator
 
 		/// <summary>
 		/// Retrieves character used to seperate Data fields in the File.
