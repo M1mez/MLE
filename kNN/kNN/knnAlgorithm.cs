@@ -45,8 +45,11 @@ namespace kNN
 		    try
 		    {
 		        stopwatch.Start();
-		        taskList.ForEach(x => x.Start());
-		        taskList.ForEach(x => x.Join());
+		        taskList.ForEach(x =>
+		        {
+		            x.Start();
+		            x.Join();
+		        });
 		        stopwatch.Stop();
             }
 		    catch (Exception e)
@@ -72,35 +75,76 @@ namespace kNN
 	        }
 	    }
 
-    private Thread ComputeOneBlock(List<DataInstance> testBlock)
+	    private Thread ComputeOneCandidate(DataInstance candidate, List<DataInstance> oldCopy)
+	    {
+	        var newCopy = new List<DataInstance>(oldCopy);
+	        var sortedCopy = new SortedList<float, DataInstance>(new DuplicateKeyComparer<float>());
+
+            return new Thread(() =>
+            {
+                //if (DataSet.Categories.Count > 5)
+                if(true)
+                {
+                    foreach (var known in newCopy)
+                    {
+                        sortedCopy.Add(FloatListComparator.SingleDist(known, candidate), candidate);
+                    }
+                    candidate.GuessedCategory = MostCommonCategorySorted(sortedCopy);
+                }
+                else
+                {
+                    var comp = new FloatListComparator(candidate);
+                    newCopy.Sort(comp);
+                    candidate.GuessedCategory = MostCommonCategory(newCopy);
+                }
+            });
+	    }
+
+        private Thread ComputeOneBlock(List<DataInstance> testBlock)
 	    {
 	        var newCopy = new List<DataInstance>(fullDataSet.DataInstances).Except(testBlock).ToList();
-	        var sortedCopy = new SortedList<float, DataInstance>(new DuplicateKeyComparer<float>());
+	        var candidateThreadList = new List<Thread>();
 	        return new Thread(() =>
 	        {
 	            foreach (var unknown in testBlock)
 	            {
-	                //var comp = new FloatListComparator(candidate);
+                    candidateThreadList.Add(ComputeOneCandidate(unknown, newCopy));
+                    //var comp = new FloatListComparator(candidate);
 
-	                //newCopy.Sort(comp);
-	                foreach (var known in newCopy)
-	                {
-	                    sortedCopy.Add(FloatListComparator.SingleDist(known, unknown), unknown);
-	                }
-	                unknown.GuessedCategory = MostCommonCategorySorted(sortedCopy);
+                    //newCopy.Sort(comp);
+	            }
+
+	            int firstBlock = candidateThreadList.Count;
+	            int secondBlock = firstBlock % 4;
+	            firstBlock -= secondBlock;
+
+	            for (var i = 4; i < firstBlock; i+=4)
+	            {
+	                for (var x = i; x < i+4; x++) candidateThreadList[x].Start();
+	                for (var x = i; x < i+4; x++) candidateThreadList[x].Join();
                 }
+	            for (var x = firstBlock; x < candidateThreadList.Count; x++) candidateThreadList[x].Start();
+	            for (var x = firstBlock; x < candidateThreadList.Count; x++) candidateThreadList[x].Join();
+	            
 
-	            var ts = stopwatch.Elapsed;
+
+                /*candidateThreadList.ForEach(x =>
+	            {
+	                x.Start();
+
+	            });
+	            candidateThreadList.ForEach(x =>
+	            {
+	                x.Join();
+                });*/
+
+                var ts = stopwatch.Elapsed;
 	            var elapsedTime = $"{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
 	            Console.WriteLine("Block {0} finished after: {1}", blockCount++, elapsedTime);
 	        });
 	    }
 
-	    private int MostCommonCategorySorted(SortedList<float, DataInstance> list)
-	    {
-	        return MostCommonCategory(list.Values.ToList());
-
-        }
+	    private int MostCommonCategorySorted(SortedList<float, DataInstance> list) => MostCommonCategory(list.Values.ToList());
 
 	    //private Dictionary<int, int> mostListedCat = new Dictionary<int, int>();
         private int MostCommonCategory(List<DataInstance> list)
@@ -110,8 +154,7 @@ namespace kNN
             list.ForEach(i =>
             {
                 if (!mostListedCat.ContainsKey(i.TrueCategory)) mostListedCat[i.TrueCategory] = 1;
-				//else?
-				mostListedCat[i.TrueCategory]++;
+				else mostListedCat[i.TrueCategory]++;
             });
 			//default? besser noch einen nächsten dazunehmen und danach beurteilen.
 	        return mostListedCat.FirstOrDefault(x => x.Value == mostListedCat.Values.Max()).Key;

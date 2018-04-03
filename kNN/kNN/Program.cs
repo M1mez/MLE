@@ -13,6 +13,7 @@ namespace kNN
         static void Main(string[] args)
         {
             //string FileName = "winequality-white.csv";
+            //string FileName = "WhiteWine1k.csv";
             string FileName = "winequality-white-1k.csv";
             //string FileName = "iris.data.txt";
 
