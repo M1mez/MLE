@@ -10,6 +10,10 @@ namespace DecisionTree
     {
         static void Main(string[] args)
         {
+            //Console.WriteLine(Constants.ChooseFile());
+            var DS = new DataSet();
+            FileHandling.ReadFile(ref DS);
+            Console.Read();
         }
     }
 }

@@ -1,0 +1,11 @@
+deadline;party;lazy;activity
+urgent;yes;yes;party
+urgent;no;yes;study
+near;yes;yes;party
+none;yes;no;party
+none;no;yes;pub
+none;yes;no;party
+near;no;no;study
+near;no;yes;tv
+near;yes;yes;party
+urgent;no;no;study
