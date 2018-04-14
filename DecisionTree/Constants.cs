@@ -11,8 +11,8 @@ namespace DecisionTree
 {
     public static class Constants
     {
-        public static string CSVPath => Path.Combine(_projectPath, "CSV");
-        private static string _projectPath => Path.GetFullPath(Path.Combine(_assemblyPath, @"..\..\..\"));
+        public static string CSVPath => System.IO.Path.Combine(_projectPath, "CSV");
+        private static string _projectPath => System.IO.Path.GetFullPath(System.IO.Path.Combine(_assemblyPath, @"..\..\..\"));
         private static string _assemblyPath => Assembly.GetExecutingAssembly().Location;
 
         

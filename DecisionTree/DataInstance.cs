@@ -13,10 +13,13 @@ namespace DecisionTree
             var index = 0;
             row.ForEach(el =>
             {
-                _row.Add(DataSet.UpdateColumn(index++, el));
+                Data.Add(DataSet.UpdateColumn(index++, el));
             });
+            Qualifier = Data.Last();
         }
 
-        public List<int> _row = new List<int>();
+        public int Qualifier { get; }
+
+        public readonly List<int> Data = new List<int>();
     }
 }

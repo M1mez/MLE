@@ -9,9 +9,9 @@ namespace DecisionTree
 {
     public static class FileHandling
     {
-        public static void ReadFile(ref DataSet DS)
+        public static void ReadFile(bool isDegbug = false)
         {
-            var filePath = ChooseFile();
+            var filePath = ChooseFile(isDegbug);
             using (var reader = new StreamReader(filePath))
             {
                 string line;
@@ -20,9 +20,9 @@ namespace DecisionTree
                 if (!reader.EndOfStream)
                 {
                     line = reader.ReadLine();
-                    delimiter = ChooseDelimiter(line);
+                    delimiter = ChooseDelimiter(line, isDegbug);
                     lineList = SplitString(line, delimiter);
-                    DataSet.SetColumns(lineList);
+                    DataSet.SetAttributes(lineList);
                 }
                 while (!reader.EndOfStream)
                 {
@@ -39,17 +39,18 @@ namespace DecisionTree
             if (toSplit == null) return null;
             var values = toSplit.Split(delimiter).ToList();
 
-            foreach (var value in values)
+            /*foreach (var value in values)
             {
                 Console.Write(value);
             }
-            Console.WriteLine();
+            Console.WriteLine();*/
 
             return values;
         }
 
-        private static char ChooseDelimiter(string example)
+        private static char ChooseDelimiter(string example, bool isDebug)
         {
+            if (isDebug) return ',';
             bool success;
             char delimiter;
 
@@ -64,12 +65,13 @@ namespace DecisionTree
             return delimiter;
         }
 
-        private static string ChooseFile()
+        private static string ChooseFile(bool isDebug)
         {
             var pdfFiles = Directory.GetFiles(Constants.CSVPath)
-                .Select(Path.GetFileName)
+                .Select(System.IO.Path.GetFileName)
                 .ToArray();
             var i = 0;
+            if (isDebug) return System.IO.Path.Combine(Constants.CSVPath, pdfFiles[1]);
 
             switch (pdfFiles.Length)
             {
@@ -99,7 +101,7 @@ namespace DecisionTree
                     break;
                 }
             }
-            return Path.Combine(Constants.CSVPath, pdfFiles[i]);
+            return System.IO.Path.Combine(Constants.CSVPath, pdfFiles[i]);
         }
 
     }

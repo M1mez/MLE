@@ -42,10 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithm.cs" />
+    <Compile Include="DataBag.cs" />
+    <Compile Include="Path.cs" />
+    <Compile Include="OldAlgorithm.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataInstance.cs" />
     <Compile Include="DataSet.cs" />
     <Compile Include="FileHandling.cs" />
+    <Compile Include="FrequencyTable.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
