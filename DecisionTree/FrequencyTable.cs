@@ -19,10 +19,27 @@ namespace DecisionTree
                 QualifierCount[instance.Qualifier]++;
             }
 
-            RowsLeft = instances.Count;
+            AllRowsLeft = instances.Count;
         }
 
-        public int RowsLeft;
+        public int AttributeRowCount(int value)
+        {
+            if (!Table.ContainsKey(value)) return 0;
+            return Table[value].Sum(entry => entry.Value);
+        }
+
+        public List<int> ValueQualifierSum(int value)
+        {
+            List<int> qualifierCount = new List<int>();
+            for (var i = 0; i < DataSet.Attributes[DataSet.QualifierIndex].ValueCount; i++)
+            {
+                qualifierCount.Add(Table.ContainsKey(value) && Table[value].ContainsKey(i) ? Table[value][i] : 0);
+            }
+
+            return qualifierCount;
+        }
+
+        public int AllRowsLeft;
         public int AttributeIndex;
         public Dictionary<int, Dictionary<int, int>> Table = new Dictionary<int, Dictionary<int, int>>();
         public List<int> QualifierCount = new int[DataSet.Attributes[DataSet.QualifierIndex].ValueCount].ToList();

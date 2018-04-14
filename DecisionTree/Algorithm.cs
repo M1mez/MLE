@@ -16,7 +16,11 @@ namespace DecisionTree
             //  2. keine Attribute übrig?
             //      Nach Häufigkeit der QUalifier entscheiden => Node = Blatt
             n.IsLeaf = data.IsAtomic;
-            if (n.IsLeaf) return;
+            if (n.IsLeaf)
+            {
+                n.EndQualifier = data.HighestQualifierCount();
+                return;
+            }
 
             //Ablauf:
             // 1. neue Node erstellen TODO nicht nötig?
@@ -44,7 +48,7 @@ namespace DecisionTree
             KeyValuePair<int, double> highestGain = new KeyValuePair<int, double>();
 
             // Menge aller aktuellen Instanzen festlegen:
-            var sum = tableList.First().RowsLeft; //tableList.Sum(table => table.RowsLeft);
+            var sum = tableList.First().AllRowsLeft; //tableList.Sum(table => table.AllRowsLeft);
             // Aufteilung der Qualifier feststellen:
             var qualifierCount = tableList[0].QualifierCount;//DataSet.GetEmptyQualifierCount;
             /*tableList.ForEach(table =>
@@ -73,22 +77,22 @@ namespace DecisionTree
 
         private static double Gain(double entropy, FrequencyTable table)
         {
-            var allInstancesLeftCount = table.RowsLeft;
+            var allInstancesLeftCount = table.AllRowsLeft;
             
             var attributeValueCount = DataSet.Attributes[table.AttributeIndex].ValueCount;
 
             //var splitDataBag = SplitDataBag(dataBag, attribute, attributeValueCount);
 
-            for (var index = 0; index < attributeValueCount; index++)
+            for (var value = 0; value < attributeValueCount; value++)
             {
-                var qualifierCount = table.QualifierCount;
-                var attributesRowAmount = table.QualifierCount.Sum();
+                var qualifierCount = table.ValueQualifierSum(value);
+                var attributesRowAmount = table.AttributeRowCount(value);
                 /*splitAmount = splitDataBag[index].Count();
                 foreach (var attribInstance in splitDataBag[index])
                 {
                     qualifierCount[attribInstance.Qualifier]++;
                 }*/
-
+                    
                 entropy -= ((double)attributesRowAmount / allInstancesLeftCount) * Entropy(attributesRowAmount, qualifierCount);
             }
 

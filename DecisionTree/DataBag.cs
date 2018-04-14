@@ -21,6 +21,23 @@ namespace DecisionTree
 
         public List<DataInstance> dataList;
         public int AttributesLeft;
-        public bool IsAtomic => AttributesLeft == 0 || dataList.All(instance => instance.Qualifier == dataList.First().Qualifier);
+        public bool IsAtomic =>  AttributesLeft == 0 || dataList.All(instance => instance.Qualifier == dataList.First().Qualifier);
+
+        public int HighestQualifierCount()
+        {
+            var qualList = DataSet.GetEmptyQualifierCount;
+            foreach (var instance in dataList)
+            {
+                qualList[instance.Qualifier]++;
+            }
+            int indexMax
+                = !qualList.Any() ? -1 :
+                    qualList
+                        .Select( (value, index) => new { Value = value, Index = index } )
+                        .Aggregate( (a, b) => (a.Value > b.Value) ? a : b )
+                        .Index;
+
+            return indexMax;
+        }
     }
 }

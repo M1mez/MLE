@@ -11,13 +11,9 @@ namespace DecisionTree
         static void Main(string[] args)
         {
             bool isDebug = false;
-            var DS = new DataSet();
-            //Console.WriteLine(Constants.ChooseFile());
             FileHandling.ReadFile(isDebug);
             DataSet.PrintStructure();
-
-           
-            //OldAlgorithm oldAlgorithm = new OldAlgorithm();
+            
             Algorithm algorithm = new Algorithm();
 
             algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
@@ -30,11 +26,21 @@ namespace DecisionTree
         {
             if (n.IsLeaf)
             {
-                Console.WriteLine($"Attribute: {n.Attribute} Value: {n.originEdge} was Leaf on level: {level}");
+                Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
+                                  $"Value: {DataSet.Attributes[n.PreviousAttribute].Values[n.originEdge]} " +
+                                  $"was Leaf on level: {level} " +
+                                  $"Qualifier: {DataSet.Attributes[DataSet.QualifierIndex].Values[n.EndQualifier]}");
                 return;
             }
-            Console.WriteLine($"Attribute: {n.Attribute} Value: {n.originEdge} level: {level}");
+            if (n.PreviousAttribute != -1)
+            Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
+                              $"Value: {DataSet.Attributes[n.PreviousAttribute].Values[n.originEdge]} " +
+                              $"level: {level}");
             n.paths.ForEach(path => PrintNode(path.Destination, level+1));
         }
+
+        private int _longestAttribute;
+        private int _longestValue;
+        private int _longestQualifier;
     }
 }
