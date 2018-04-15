@@ -8,62 +8,41 @@ namespace DecisionTree
 {
     class Algorithm
     {
-        public void ID3(Node n, DataBag data)
+        public static void ID3(Node n, DataBag data, int level = 1)
         {
-            //Abbruchbedingungen:
-            //  1. Pure Decision? 
-            //      Qualifier alle selben Wert? => Node = Blatt
-            //  2. keine Attribute übrig?
-            //      Nach Häufigkeit der QUalifier entscheiden => Node = Blatt
+            if (DataSet.MaxLevel < level) DataSet.MaxLevel = level;
             n.IsLeaf = data.IsAtomic;
             if (n.IsLeaf)
             {
-                n.EndQualifier = data.HighestQualifierCount();
+                n.Qualifier = data.HighestQualifierCount();
                 return;
             }
+            var table = DataSet.GetFrequencyTables(data.dataList);
+            n.Attribute = HighestGainAttribute(table);
 
-            //Ablauf:
-            // 1. neue Node erstellen TODO nicht nötig?
-            // 2. Berechne HighestGain von der Tabelle, Attribut wird dann im neuen Node gesetzt
-            var Table = DataSet.GetFrequencyTables(data.dataList);
-            n.Attribute = HighestGainAttribute(Table);
-            // 3. Pro möglichem Wert im Attribut:
-            //      eine neue Node zu paths hinzufügen
-            //      Alle Instanzen aus DataBag entfernen, die nicht diesen Value im Attribut haben
-            //      damit ID3 neu aufrufen
             for (var attributeValue = 0; attributeValue < DataSet.Attributes[n.Attribute].ValueCount; attributeValue++)
             {
-                n.paths.Add(new Path(attributeValue));
-                var newNode = new Node(n.Attribute) {originEdge = attributeValue};
+                var p = new Path(level);
+                var newNode = new Node(n.Attribute) {OriginEdge = attributeValue};
                 var newData = new DataBag(data, n.Attribute, attributeValue);
-                n.paths[attributeValue].Destination = newNode;
-                ID3(newNode, newData);
+                p.Destination = newNode;
+                n.Paths.Add(p);
+                ID3(newNode, newData, level+1);
             }
         }
 
 
         private static int HighestGainAttribute(List<FrequencyTable> tableList)
         {
+            if (tableList == null) throw new ArgumentNullException(nameof(tableList));
             var attribCount = DataSet.Attributes.Count - 1;
-            KeyValuePair<int, double> highestGain = new KeyValuePair<int, double>();
-
-            // Menge aller aktuellen Instanzen festlegen:
-            var sum = tableList.First().AllRowsLeft; //tableList.Sum(table => table.AllRowsLeft);
-            // Aufteilung der Qualifier feststellen:
-            var qualifierCount = tableList[0].QualifierCount;//DataSet.GetEmptyQualifierCount;
-            /*tableList.ForEach(table =>
-            {
-                for (var i = 0; i < table.QualifierCount.Count; i++)
-                {
-                    qualifierCount[i] += table.QualifierCount[i];
-                }
-            });*/
-
-            //Allgemeine Entropy für aktuelles Attribut ausrechnen
+            var highestGain = new KeyValuePair<int, double>();
+            
+            var sum = tableList.First().AllRowsLeft;
+            var qualifierCount = tableList[0].QualifierCount;
             var entropy = Entropy(sum, qualifierCount);
-
-            //Gain für jedes Attribut durchführen und vergleichen
-            for (int i = 0; i < attribCount; i++)
+            
+            for (var i = 0; i < attribCount; i++)
             {
                 var currGain = Gain(entropy, tableList[i]);
                 if (highestGain.Value < currGain)
@@ -71,27 +50,18 @@ namespace DecisionTree
                     highestGain = new KeyValuePair<int, double>(i, currGain);
                 }
             }
-
             return highestGain.Key;
         }
 
         private static double Gain(double entropy, FrequencyTable table)
         {
             var allInstancesLeftCount = table.AllRowsLeft;
-            
             var attributeValueCount = DataSet.Attributes[table.AttributeIndex].ValueCount;
-
-            //var splitDataBag = SplitDataBag(dataBag, attribute, attributeValueCount);
 
             for (var value = 0; value < attributeValueCount; value++)
             {
                 var qualifierCount = table.ValueQualifierSum(value);
                 var attributesRowAmount = table.AttributeRowCount(value);
-                /*splitAmount = splitDataBag[index].Count();
-                foreach (var attribInstance in splitDataBag[index])
-                {
-                    qualifierCount[attribInstance.Qualifier]++;
-                }*/
                     
                 entropy -= ((double)attributesRowAmount / allInstancesLeftCount) * Entropy(attributesRowAmount, qualifierCount);
             }
@@ -101,8 +71,8 @@ namespace DecisionTree
 
         private static double Entropy(int amount, List<int> qualifierCount)
         {
-            double entropy, fraction, outcome;
-            entropy = 0.0d;
+            double fraction, outcome;
+            var entropy = 0.0d;
 
             qualifierCount.ForEach(qual =>
             {

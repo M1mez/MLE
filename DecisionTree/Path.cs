@@ -8,12 +8,12 @@ namespace DecisionTree
 {
     public class Path
     {
-        public Path(int value)
+        public Path(int level)
         {
-            Value = value;
+            Level = level;
         }
 
-        public int Value;
+        public int Level;
         public Node Destination;
     }
 }

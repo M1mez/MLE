@@ -14,11 +14,12 @@ namespace DecisionTree
         {
             PreviousAttribute = attribute;
         }
+        
         public int Attribute;
-        public int PreviousAttribute;
-        public List<Path> paths = new List<Path>();
-        public int originEdge;
-        public bool IsLeaf; //=> DataSet.Attributes.Count - 1 == Attribute;
-        public int EndQualifier;
+        public readonly int PreviousAttribute;
+        public List<Path> Paths = new List<Path>();
+        public int OriginEdge;
+        public bool IsLeaf;
+        public int Qualifier;
     }
 }

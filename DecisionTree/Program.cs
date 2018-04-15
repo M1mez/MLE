@@ -12,13 +12,13 @@ namespace DecisionTree
         {
             bool isDebug = false;
             FileHandling.ReadFile(isDebug);
-            DataSet.PrintStructure();
+            //DataSet.PrintSimpleStructure();
             
             Algorithm algorithm = new Algorithm();
 
-            algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
-
-            PrintNode(DataSet.RootNode, 0);
+            Algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
+            DataSet.PrintDesignStructure();
+            //PrintNode(DataSet.RootNode, 0);
             if (!isDebug) Console.Read();
         }
 
@@ -27,20 +27,17 @@ namespace DecisionTree
             if (n.IsLeaf)
             {
                 Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
-                                  $"Value: {DataSet.Attributes[n.PreviousAttribute].Values[n.originEdge]} " +
+                                  $"Level: {DataSet.Attributes[n.PreviousAttribute].Values[n.OriginEdge]} " +
                                   $"was Leaf on level: {level} " +
-                                  $"Qualifier: {DataSet.Attributes[DataSet.QualifierIndex].Values[n.EndQualifier]}");
+                                  $"Qualifier: {DataSet.Attributes[DataSet.QualifierIndex].Values[n.Qualifier]}");
                 return;
             }
             if (n.PreviousAttribute != -1)
             Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
-                              $"Value: {DataSet.Attributes[n.PreviousAttribute].Values[n.originEdge]} " +
-                              $"level: {level}");
-            n.paths.ForEach(path => PrintNode(path.Destination, level+1));
+                              $"Level: {DataSet.Attributes[n.PreviousAttribute].Values[n.OriginEdge]} " +
+                              $"level: {level} " +
+                              $"leads to: {DataSet.Attributes[n.Attribute].Name}");
+            n.Paths.ForEach(path => PrintNode(path.Destination, level+1));
         }
-
-        private int _longestAttribute;
-        private int _longestValue;
-        private int _longestQualifier;
     }
 }

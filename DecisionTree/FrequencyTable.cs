@@ -30,7 +30,7 @@ namespace DecisionTree
 
         public List<int> ValueQualifierSum(int value)
         {
-            List<int> qualifierCount = new List<int>();
+            var qualifierCount = new List<int>();
             for (var i = 0; i < DataSet.Attributes[DataSet.QualifierIndex].ValueCount; i++)
             {
                 qualifierCount.Add(Table.ContainsKey(value) && Table[value].ContainsKey(i) ? Table[value][i] : 0);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Security.Permissions;
@@ -23,8 +24,6 @@ namespace DecisionTree
         private static int _qualifierIndex;
         public static int QualifierIndex => _qualifierIndex == 0 ? (_qualifierIndex = Attributes.Count - 1) : _qualifierIndex;
 
-        //private static double Entropy;
-        
         public static List<FrequencyTable> GetFrequencyTables(List<DataInstance> instances)
         {
             var list = new List<FrequencyTable>();
@@ -38,27 +37,80 @@ namespace DecisionTree
 
         public static List<int> GetEmptyQualifierCount => new int[Attributes[QualifierIndex].ValueCount].ToList();
 
-
-        public static void PrintStructure()
+        public static void PrintDesignStructure() => PrintDesignStructure(RootNode);
+        private static void PrintDesignStructure(Node n, int level = 0, bool isLastPath = true)
         {
-            Attributes.ForEach(x => x.PrintStructure());
-            Instances.ForEach(x =>
+            for (var index = 0; index <= level; index++)
             {
-                x.Data.ForEach(y =>
-                {
-                    Console.Write(y + " ");
-                });
-                Console.WriteLine();
-            });
+                if (index == level)
+                    if (isLastPath)
+                    {
+                        WasLastPath[level] = true;
+                        Console.Write("└");
+                    }
+                    else Console.Write("├");
+                else
+                if (WasLastPath[index]) Console.Write(" ");
+                else Console.Write("│");
+                Console.Write(new string(' ', LevelWidths[index]));
+            }
 
-            (from x in Instances where x.Data[0] == 1 select x).ToList();
+            string name;
+            if (n.PreviousAttribute >= 0)
+            {
+                name = GetName(n.PreviousAttribute, n.OriginEdge);
+                Console.Write($"({name}) -> ");
+            }
+
+            if (n.IsLeaf)
+            {
+                Console.WriteLine($"{GetName(QualifierIndex)}: {GetName(QualifierIndex, n.Qualifier)}");
+            }
+            else
+            {
+                name = GetName(n.Attribute);
+                LevelWidths[level] = name.Length;
+                if (n.PreviousAttribute >= 0) LevelWidths[level] += 10;
+                Console.WriteLine($"{name} ");
+            }
+            
+
+            for (var index = 0; index < n.Paths.Count; index++)
+            {
+                LevelWidths[level + 1] = 0;
+                var path = n.Paths[index];
+                if (index == Attributes[n.Attribute].ValueCount - 1)
+                {
+                    PrintDesignStructure(path.Destination, level + 1, true);
+                }
+                else PrintDesignStructure(path.Destination, level + 1, false);
+            }
         }
+        private static List<bool> _wasLastPath;
+        private static List<bool> WasLastPath
+        {
+            get
+            {
+                if (_wasLastPath == null)
+                {
+                    _wasLastPath = new bool[MaxLevel].ToList();
+                    _wasLastPath[0] = true;
+                }
+
+                return _wasLastPath;
+            }
+        }
+        private static List<int> _levelWidths;
+        private static List<int> LevelWidths => 
+            _levelWidths ?? (_levelWidths = new int[MaxLevel].ToList());
+
+        public static int MaxLevel = 0;
 
         public static List<Attribute> Attributes = new List<Attribute>();
         public static List<DataInstance> Instances { get; set; } = new List<DataInstance>();
-        //public static DataBag 
+        public static int UpdateColumn(int index, string value) => Attributes[index].AddValue(value.Trim(' '));
 
-        public static int UpdateColumn(int index, string value) => Attributes[index].AddValue(value);
+        private static string GetName(int attributeIndex, int valueIndex = -1) => valueIndex < 0 ? Attributes[attributeIndex].Name : Attributes[attributeIndex].Values[valueIndex];
     }
 
     public class Attribute
@@ -81,27 +133,5 @@ namespace DecisionTree
 
         private int _valueCount = 0;
         public int ValueCount => _valueCount == 0 ? (_valueCount = Values.Count) : _valueCount;
-
-        public string GetValueName(int value) => Values[value];
-
-
-
-
-
-
-        public void PrintStructure()
-        {
-            Console.Write(Name + ":   ");
-            for (var index = 0; index < Values.Count; index++)
-            {
-                var el = Values[index];
-                Console.Write(el + ": " + index + ", ");
-            }
-
-            Console.WriteLine();
-
-            
-        }
-        
     }
 }

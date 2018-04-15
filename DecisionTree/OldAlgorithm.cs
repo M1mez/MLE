@@ -19,7 +19,7 @@ namespace DecisionTree
             {
                 var newNode = new Node(index);
                 //n.paths.Add(newNode);
-                newNode.originEdge = index;
+                newNode.OriginEdge = index;
                 ID3(newNode, dataBag.Where(x => x.Data[n.Attribute] == index).ToList());
             }
         }
