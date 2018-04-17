@@ -17,7 +17,7 @@ namespace DecisionTree
         
         public int Attribute;
         public readonly int PreviousAttribute;
-        public List<Path> Paths = new List<Path>();
+        public readonly List<Path> Paths = new List<Path>();
         public int OriginEdge;
         public bool IsLeaf;
         public int Qualifier;

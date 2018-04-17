@@ -12,6 +12,46 @@ namespace DecisionTree
 {
     public class DataSet
     {
+        #region Fields
+        public static readonly List<Attribute> Attributes = new List<Attribute>();
+
+        public static int MaxLevel = 0;
+
+        private static List<bool> _wasLastPath;
+        private static List<int> _levelWidths;
+
+        //TODO Warum in DataSet RootNode?
+        public static readonly Node RootNode = new Node(-1);
+        private static int _qualifierIndex;
+        public static int QualifierIndex => _qualifierIndex == 0 ? (_qualifierIndex = Attributes.Count - 1) : _qualifierIndex;
+
+        public static List<int> GetEmptyQualifierCount => new int[Attributes[QualifierIndex].ValueCount].ToList();
+
+        public static List<DataInstance> Instances { get; set; } = new List<DataInstance>();
+        #endregion
+
+        #region Properties
+        private static List<int> LevelWidths =>
+            _levelWidths ?? (_levelWidths = new int[MaxLevel].ToList());
+
+        private static List<bool> WasLastPath
+        {
+            get
+            {
+                if (_wasLastPath == null)
+                {
+                    _wasLastPath = new bool[MaxLevel].ToList();
+                    _wasLastPath[0] = true;
+                }
+
+                return _wasLastPath;
+            }
+        }
+        
+        public static int UpdateColumn(int index, string value) => Attributes[index].AddValue(value.Trim(' '));
+        #endregion
+        
+        #region Methods
         public static void SetAttributes(List<string> rows)
         {
             rows.ForEach(el =>
@@ -19,10 +59,6 @@ namespace DecisionTree
                 Attributes.Add(new Attribute(el));
             });
         }
-
-        public static Node RootNode = new Node(-1);
-        private static int _qualifierIndex;
-        public static int QualifierIndex => _qualifierIndex == 0 ? (_qualifierIndex = Attributes.Count - 1) : _qualifierIndex;
 
         public static List<FrequencyTable> GetFrequencyTables(List<DataInstance> instances)
         {
@@ -34,8 +70,6 @@ namespace DecisionTree
 
             return list;
         }
-
-        public static List<int> GetEmptyQualifierCount => new int[Attributes[QualifierIndex].ValueCount].ToList();
 
         public static void PrintDesignStructure() => PrintDesignStructure(RootNode);
         private static void PrintDesignStructure(Node n, int level = 0, bool isLastPath = true)
@@ -86,31 +120,9 @@ namespace DecisionTree
                 else PrintDesignStructure(path.Destination, level + 1, false);
             }
         }
-        private static List<bool> _wasLastPath;
-        private static List<bool> WasLastPath
-        {
-            get
-            {
-                if (_wasLastPath == null)
-                {
-                    _wasLastPath = new bool[MaxLevel].ToList();
-                    _wasLastPath[0] = true;
-                }
-
-                return _wasLastPath;
-            }
-        }
-        private static List<int> _levelWidths;
-        private static List<int> LevelWidths => 
-            _levelWidths ?? (_levelWidths = new int[MaxLevel].ToList());
-
-        public static int MaxLevel = 0;
-
-        public static List<Attribute> Attributes = new List<Attribute>();
-        public static List<DataInstance> Instances { get; set; } = new List<DataInstance>();
-        public static int UpdateColumn(int index, string value) => Attributes[index].AddValue(value.Trim(' '));
 
         private static string GetName(int attributeIndex, int valueIndex = -1) => valueIndex < 0 ? Attributes[attributeIndex].Name : Attributes[attributeIndex].Values[valueIndex];
+        #endregion
     }
 
     public class Attribute
@@ -130,8 +142,7 @@ namespace DecisionTree
             }
             return index;
         }
-
-        private int _valueCount = 0;
-        public int ValueCount => _valueCount == 0 ? (_valueCount = Values.Count) : _valueCount;
+        
+        public int ValueCount => Values.Count;
     }
 }
