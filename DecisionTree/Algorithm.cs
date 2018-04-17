@@ -17,24 +17,22 @@ namespace DecisionTree
                 n.Qualifier = data.HighestQualifierCount();
                 return;
             }
-            var table = DataSet.GetFrequencyTables(data.dataList);
-            n.Attribute = HighestGainAttribute(table);
+            n.Attribute = HighestGainAttribute(data);
 
             for (var attributeValue = 0; attributeValue < DataSet.Attributes[n.Attribute].ValueCount; attributeValue++)
             {
-                var p = new Path(level);
                 var newNode = new Node(n.Attribute) {OriginEdge = attributeValue};
                 var newData = new DataBag(data, n.Attribute, attributeValue);
-                p.Destination = newNode;
-                n.Paths.Add(p);
+                n.Paths.Add(newNode);
                 ID3(newNode, newData, level+1);
             }
         }
-
-
-        private static int HighestGainAttribute(List<FrequencyTable> tableList)
+        
+        private static int HighestGainAttribute(DataBag data)
         {
+            var tableList = GetFrequencyTables(data.dataList);
             if (tableList == null) throw new ArgumentNullException(nameof(tableList));
+
             var attribCount = DataSet.Attributes.Count - 1;
             var highestGain = new KeyValuePair<int, double>();
             
@@ -51,6 +49,17 @@ namespace DecisionTree
                 }
             }
             return highestGain.Key;
+        }
+
+        private static List<FrequencyTable> GetFrequencyTables(List<DataInstance> instances)
+        {
+            var list = new List<FrequencyTable>();
+            for (var index = 0; index < DataSet.Attributes.Count - 1; index++)
+            {
+                list.Add(new FrequencyTable(instances, index));
+            }
+
+            return list;
         }
 
         private static double Gain(double entropy, FrequencyTable table)

@@ -13,9 +13,17 @@ namespace DecisionTree
             AttributeIndex = attributeIndex;
             foreach (var instance in instances)
             {
-                if (!_table.ContainsKey(instance.Data[attributeIndex])) _table[instance.Data[attributeIndex]] = new Dictionary<int, int>();
-                if (!_table[instance.Data[attributeIndex]].ContainsKey(instance.Qualifier)) _table[instance.Data[attributeIndex]][instance.Qualifier] = 0;
-                _table[instance.Data[attributeIndex]][instance.Qualifier]++;
+                if (!Table.ContainsKey(instance.Data[attributeIndex]))
+                {
+                    Table[instance.Data[attributeIndex]] = new Dictionary<int, int>();
+                }
+
+                if (!Table[instance.Data[attributeIndex]].ContainsKey(instance.Qualifier))
+                {
+                    Table[instance.Data[attributeIndex]][instance.Qualifier] = 0;
+                }
+
+                Table[instance.Data[attributeIndex]][instance.Qualifier]++;
                 QualifierCount[instance.Qualifier]++;
             }
 
@@ -24,8 +32,8 @@ namespace DecisionTree
 
         public int AttributeRowCount(int value)
         {
-            if (!_table.ContainsKey(value)) return 0;
-            return _table[value].Sum(entry => entry.Value);
+            if (!Table.ContainsKey(value)) return 0;
+            return Table[value].Sum(entry => entry.Value);
         }
 
         public List<int> ValueQualifierSum(int value)
@@ -33,15 +41,15 @@ namespace DecisionTree
             var qualifierCount = new List<int>();
             for (var i = 0; i < DataSet.Attributes[DataSet.QualifierIndex].ValueCount; i++)
             {
-                qualifierCount.Add(_table.ContainsKey(value) && _table[value].ContainsKey(i) ? _table[value][i] : 0);
+                qualifierCount.Add(Table.ContainsKey(value) && Table[value].ContainsKey(i) ? Table[value][i] : 0);
             }
 
             return qualifierCount;
         }
 
-        public readonly int AllRowsLeft;
-        public readonly int AttributeIndex;
-        private readonly Dictionary<int, Dictionary<int, int>> _table = new Dictionary<int, Dictionary<int, int>>();
-        public readonly List<int> QualifierCount = new int[DataSet.Attributes[DataSet.QualifierIndex].ValueCount].ToList();
+        public int AllRowsLeft;
+        public int AttributeIndex;
+        public Dictionary<int, Dictionary<int, int>> Table = new Dictionary<int, Dictionary<int, int>>();
+        public List<int> QualifierCount = new int[DataSet.Attributes[DataSet.QualifierIndex].ValueCount].ToList();
     }
 }
