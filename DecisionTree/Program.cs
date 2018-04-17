@@ -17,7 +17,7 @@ namespace DecisionTree
             Algorithm algorithm = new Algorithm();
 
             Algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
-            DataSet.PrintDesignStructure();
+            Printer.Print(DataSet.RootNode);
             //PrintNode(DataSet.RootNode, 0);
             if (!isDebug) Console.Read();
         }
@@ -37,7 +37,7 @@ namespace DecisionTree
                               $"Level: {DataSet.Attributes[n.PreviousAttribute].Values[n.OriginEdge]} " +
                               $"level: {level} " +
                               $"leads to: {DataSet.Attributes[n.Attribute].Name}");
-            n.Paths.ForEach(path => PrintNode(path.Destination, level+1));
+            n.Paths.ForEach(path => PrintNode(path, level+1));
         }
     }
 }

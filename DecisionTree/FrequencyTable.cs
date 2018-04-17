@@ -13,8 +13,16 @@ namespace DecisionTree
             AttributeIndex = attributeIndex;
             foreach (var instance in instances)
             {
-                if (!Table.ContainsKey(instance.Data[attributeIndex])) Table[instance.Data[attributeIndex]] = new Dictionary<int, int>();
-                if (!Table[instance.Data[attributeIndex]].ContainsKey(instance.Qualifier)) Table[instance.Data[attributeIndex]][instance.Qualifier] = 0;
+                if (!Table.ContainsKey(instance.Data[attributeIndex]))
+                {
+                    Table[instance.Data[attributeIndex]] = new Dictionary<int, int>();
+                }
+
+                if (!Table[instance.Data[attributeIndex]].ContainsKey(instance.Qualifier))
+                {
+                    Table[instance.Data[attributeIndex]][instance.Qualifier] = 0;
+                }
+
                 Table[instance.Data[attributeIndex]][instance.Qualifier]++;
                 QualifierCount[instance.Qualifier]++;
             }
