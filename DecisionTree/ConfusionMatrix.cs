@@ -19,8 +19,7 @@ namespace DecisionTree
         public void PrintMatrix()
         {
             var format = "{0,-" + _longestCatStringLength + "}";
-            //print space x times
-            Console.Write("\n" + new string(' ', _longestCatStringLength));
+            Console.Write(new string(' ', _longestCatStringLength));
             foreach (var qualifier in DataSet.Attributes[DataSet.QualifierIndex].Values) Console.Write(format, qualifier);
             Console.WriteLine();
             for (var x = 0; x < _dimensionSize; x++)
@@ -80,7 +79,7 @@ namespace DecisionTree
                     falsePos++;
                     falseNeg++;
                     trueNeg += (_dimensionSize - 2);
-                    Console.WriteLine($"Wrong: {DataSet.Instances.IndexOf(instance)}");
+                    //Console.WriteLine($"Wrong: {DataSet.Instances.IndexOf(instance)}");
                 }
 
                 _matrix[instance.Qualifier, outcome]++;

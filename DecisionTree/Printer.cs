@@ -77,6 +77,13 @@ namespace DecisionTree
             _levelWidths ?? (_levelWidths = new int[DataSet.MaxLevel].ToList());
 
         public static string GetName(int attributeIndex, int valueIndex = -1) => valueIndex < 0 ? DataSet.Attributes[attributeIndex].Name : DataSet.Attributes[attributeIndex].Values[valueIndex];
+
+        public static void BeautifulBorder(string toWrite)
+        {
+            Console.WriteLine($"╔{new string('═', toWrite.Length + 2)}╗");
+            Console.WriteLine("║ " + toWrite + " ║");
+            Console.WriteLine($"╚{new string('═', toWrite.Length + 2)}╝");
+        }
     }
 
 }

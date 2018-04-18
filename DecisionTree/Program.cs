@@ -17,32 +17,16 @@ namespace DecisionTree
             Algorithm algorithm = new Algorithm();
 
             Algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
+            Printer.BeautifulBorder("ID3:");
             Printer.Print(DataSet.RootNode);
             //PrintNode(DataSet.RootNode, 0);
             var b = new Bayes();
             var con = new ConfusionMatrix();
-
+            Printer.BeautifulBorder("Naïve Bayes:");
             con.PrintMatrix();
 
             if (!isDebug) Console.Read();
         }
-
-        private static void PrintNode(Node n, int level)
-        {
-            if (n.IsLeaf)
-            {
-                Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
-                                  $"Level: {DataSet.Attributes[n.PreviousAttribute].Values[n.OriginEdge]} " +
-                                  $"was Leaf on level: {level} " +
-                                  $"Qualifier: {DataSet.Attributes[DataSet.QualifierIndex].Values[n.Qualifier]}");
-                return;
-            }
-            if (n.PreviousAttribute != -1)
-            Console.WriteLine($"Attribute: {DataSet.Attributes[n.PreviousAttribute].Name} " +
-                              $"Level: {DataSet.Attributes[n.PreviousAttribute].Values[n.OriginEdge]} " +
-                              $"level: {level} " +
-                              $"leads to: {DataSet.Attributes[n.Attribute].Name}");
-            n.Paths.ForEach(path => PrintNode(path, level+1));
-        }
+        
     }
 }
