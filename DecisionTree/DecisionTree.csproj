@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm.cs" />
+    <Compile Include="Bayes.cs" />
+    <Compile Include="ConfusionMatrix.cs" />
     <Compile Include="DataBag.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataInstance.cs" />

@@ -30,7 +30,7 @@ namespace DecisionTree
         
         private static int HighestGainAttribute(DataBag data)
         {
-            var tableList = GetFrequencyTables(data.dataList);
+            var tableList = FrequencyTable.GetFrequencyTables(data.dataList);
             if (tableList == null) throw new ArgumentNullException(nameof(tableList));
 
             var attribCount = DataSet.Attributes.Count - 1;
@@ -49,17 +49,6 @@ namespace DecisionTree
                 }
             }
             return highestGain.Key;
-        }
-
-        private static List<FrequencyTable> GetFrequencyTables(List<DataInstance> instances)
-        {
-            var list = new List<FrequencyTable>();
-            for (var index = 0; index < DataSet.Attributes.Count - 1; index++)
-            {
-                list.Add(new FrequencyTable(instances, index));
-            }
-
-            return list;
         }
 
         private static double Gain(double entropy, FrequencyTable table)

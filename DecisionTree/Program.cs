@@ -19,6 +19,11 @@ namespace DecisionTree
             Algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
             Printer.Print(DataSet.RootNode);
             //PrintNode(DataSet.RootNode, 0);
+            var b = new Bayes();
+            var con = new ConfusionMatrix();
+
+            con.PrintMatrix();
+
             if (!isDebug) Console.Read();
         }
 

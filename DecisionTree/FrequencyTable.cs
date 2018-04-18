@@ -14,14 +14,10 @@ namespace DecisionTree
             foreach (var instance in instances)
             {
                 if (!Table.ContainsKey(instance.Data[attributeIndex]))
-                {
                     Table[instance.Data[attributeIndex]] = new Dictionary<int, int>();
-                }
-
+                
                 if (!Table[instance.Data[attributeIndex]].ContainsKey(instance.Qualifier))
-                {
                     Table[instance.Data[attributeIndex]][instance.Qualifier] = 0;
-                }
 
                 Table[instance.Data[attributeIndex]][instance.Qualifier]++;
                 QualifierCount[instance.Qualifier]++;
@@ -45,6 +41,19 @@ namespace DecisionTree
             }
 
             return qualifierCount;
+        }
+
+
+
+        public static List<FrequencyTable> GetFrequencyTables(List<DataInstance> instances)
+        {
+            var list = new List<FrequencyTable>();
+            for (var index = 0; index < DataSet.Attributes.Count - 1; index++)
+            {
+                list.Add(new FrequencyTable(instances, index));
+            }
+
+            return list;
         }
 
         public int AllRowsLeft;
