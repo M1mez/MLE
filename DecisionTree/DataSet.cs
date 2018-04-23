@@ -20,7 +20,6 @@ namespace DecisionTree
             });
         }
         
-        //TODO Verschieben in andere Klasse?
         public static Node RootNode = new Node(-1);
         private static int _qualifierIndex;
         public static int QualifierIndex => _qualifierIndex == 0 ? (_qualifierIndex = Attributes.Count - 1) : _qualifierIndex;

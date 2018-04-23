@@ -25,6 +25,9 @@ namespace DecisionTree
             Printer.BeautifulBorder("Naïve Bayes:");
             con.PrintMatrix();
 
+            b.PrintLikelihoodTable();
+            
+
             if (!isDebug) Console.Read();
         }
         

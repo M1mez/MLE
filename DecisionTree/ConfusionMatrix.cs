@@ -32,7 +32,7 @@ namespace DecisionTree
                     if (x == y) newColor = ConsoleColor.Green;
                     else if (_matrix[x, y] > 0) newColor = ConsoleColor.Red;
                     else newColor = ConsoleColor.Gray;
-                    WriteInStyle(_matrix[x, y].ToString().PadLeft(_longestCatStringLength / 2).PadRight(_longestCatStringLength), newColor);
+                    Printer.WriteInStyle(_matrix[x, y].ToString().PadLeft(_longestCatStringLength / 2).PadRight(_longestCatStringLength), newColor);
                 }
                 Console.WriteLine();
             }
@@ -41,22 +41,8 @@ namespace DecisionTree
             if (Accuracy < 25) accuracyColor = ConsoleColor.DarkRed;
             else if (Accuracy > 75) accuracyColor = ConsoleColor.Green;
             Console.Write("\nAccuracy: ");
-            WriteInStyle($"{Accuracy.ToString("0.00") + " %"}",accuracyColor);
+            Printer.WriteInStyle($"{Accuracy.ToString("0.00") + " %"}\n\n",accuracyColor);
             //Console.WriteLine($"Real Accuracy: {RealAccuracy.ToString("0.00") + " %"}");
-        }
-
-        private void WriteInStyle(string toWrite, ConsoleColor foreground, ConsoleColor backGround = ConsoleColor.Black)
-        {
-            var oldForeColor = Console.ForegroundColor;
-            var oldBackColor = Console.BackgroundColor;
-
-            Console.ForegroundColor = foreground;
-            Console.BackgroundColor = backGround;
-
-            Console.Write(toWrite);
-
-            Console.ForegroundColor = oldForeColor;
-            Console.BackgroundColor = oldBackColor;
         }
 
         public ConfusionMatrix()

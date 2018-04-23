@@ -58,7 +58,7 @@ namespace DecisionTree
                     var valueIndex = instance.Data[attributeIndex];
                     var tempBayesEntry = BayesTable[attributeIndex][valueIndex][qualifierIndex];
 
-                    fractionParts[qualifierIndex] *= tempBayesEntry;
+                    fractionParts[qualifierIndex] *= (double) tempBayesEntry.Key / tempBayesEntry.Value;
                 }
                 fractionParts[qualifierIndex] *= QualifierProbability(qualifierIndex);
             }
@@ -79,25 +79,35 @@ namespace DecisionTree
             foreach (var attributeFrequency in Frequency)
             {
                 var attributeIndex = attributeFrequency.AttributeIndex;
-                if (!BayesTable.ContainsKey(attributeIndex)) BayesTable.Add(attributeIndex, new Dictionary<int, Dictionary<int, double>>());
+                if (!BayesTable.ContainsKey(attributeIndex)) BayesTable.Add(attributeIndex, new Dictionary<int, Dictionary<int, KeyValuePair<int, int>>>());
 
                 for (var valueIndex = 0; valueIndex < Attributes[attributeIndex].ValueCount; valueIndex++)
                 {
-                    if (!BayesTable[attributeIndex].ContainsKey(valueIndex)) BayesTable[attributeIndex].Add(valueIndex, new Dictionary<int, double>());
+                    if (!BayesTable[attributeIndex].ContainsKey(valueIndex)) BayesTable[attributeIndex].Add(valueIndex, new Dictionary<int, KeyValuePair<int, int>>());
 
                     for (var qualifierIndex = 0; qualifierIndex < QualifierCount; qualifierIndex++)
                     {
+                        var newPair = new KeyValuePair<int, int>(
+                            attributeFrequency.Table[valueIndex].ContainsKey(qualifierIndex)
+                                ? attributeFrequency.Table[valueIndex][qualifierIndex] 
+                                : 0,
+                            QualifierAmount[qualifierIndex]
+                        );
+                        
+                        
                         var zaehler = attributeFrequency.Table[valueIndex].ContainsKey(qualifierIndex) ?
                             attributeFrequency.Table[valueIndex][qualifierIndex] : 0;
                         var nenner = QualifierAmount[qualifierIndex];
 
-                        BayesTable[attributeIndex][valueIndex][qualifierIndex] = (double) zaehler / nenner;
+                        BayesTable[attributeIndex][valueIndex][qualifierIndex] = newPair; //(double) zaehler / nenner;
                     }
                 }
             }
         }
 
-        private Dictionary<int, Dictionary<int, Dictionary<int, double>>> BayesTable = new Dictionary<int, Dictionary<int, Dictionary<int, double>>>();
+        public void PrintLikelihoodTable() => Printer.PrintLikelihoodTable(BayesTable, QualifierAmount.Sum());
+
+        private Dictionary<int, Dictionary<int, Dictionary<int, KeyValuePair<int, int>>>> BayesTable = new Dictionary<int, Dictionary<int, Dictionary<int, KeyValuePair<int, int>>>>();
 
         
     }
