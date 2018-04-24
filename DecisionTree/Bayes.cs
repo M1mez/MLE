@@ -53,7 +53,7 @@ namespace DecisionTree
             for (var qualifierIndex = 0; qualifierIndex < QualifierCount; qualifierIndex++)
             {
                 if (fractionParts.Count <= qualifierIndex) fractionParts.Add(1.0d);
-                for (var attributeIndex = 0; attributeIndex < instance.Data.Count - 1; attributeIndex++)
+                for (var attributeIndex = 0; attributeIndex < Attributes.Count-1; attributeIndex++)
                 {
                     var valueIndex = instance.Data[attributeIndex];
                     var tempBayesEntry = BayesTable[attributeIndex][valueIndex][qualifierIndex];

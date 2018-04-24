@@ -19,14 +19,20 @@ namespace DecisionTree
             Algorithm.ID3(DataSet.RootNode, new DataBag(DataSet.Instances));
             Printer.BeautifulBorder("ID3:");
             Printer.Print(DataSet.RootNode);
-            //PrintNode(DataSet.RootNode, 0);
+
             var b = new Bayes();
             var con = new ConfusionMatrix();
             Printer.BeautifulBorder("Naïve Bayes:");
             con.PrintMatrix();
 
             b.PrintLikelihoodTable();
-            
+
+            Console.WriteLine(
+            b.ClassifyDataInstance(new DataInstance(new List<string>()
+            {
+                "rainy","mild","normal","true"
+            })));
+
 
             if (!isDebug) Console.Read();
         }
