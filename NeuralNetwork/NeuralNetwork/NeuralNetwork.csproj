@@ -4,4 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NeuralNetwork.Interfaces\NeuralNetwork.Interfaces.csproj" />
+    <ProjectReference Include="..\NN_ActivationFunctions\NeuralNetwork.StaticFunctions.csproj" />
+  </ItemGroup>
+
 </Project>

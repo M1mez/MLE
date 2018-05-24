@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NN_staticFunctions
+namespace NeuralNetwork.StaticFunctions
 {
     public static class ActivationFunctions
     {
