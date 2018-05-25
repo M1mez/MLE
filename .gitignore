@@ -318,3 +318,7 @@ ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
+/NeuralNetwork/NeuralNetwork/ImageData/t10k-images-idx3-ubyte.dat
+/NeuralNetwork/NeuralNetwork/ImageData/t10k-labels-idx1-ubyte.dat
+/NeuralNetwork/NeuralNetwork/ImageData/train-images-idx3-ubyte.dat
+/NeuralNetwork/NeuralNetwork/ImageData/train-labels-idx1-ubyte.dat
