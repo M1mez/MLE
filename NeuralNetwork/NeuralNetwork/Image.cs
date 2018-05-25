@@ -9,8 +9,8 @@ namespace NeuralNetwork
 	/// </summary>
 	public class Image
 	{
-		private int Label;
-		private double[] Data;
+		public int Label;
+		public double[] Data;
 
 		public Image(int label, byte[] data)
 		{
