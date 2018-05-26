@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDataInstance.cs" />
     <Compile Include="INetwork.cs" />
     <Compile Include="ILayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

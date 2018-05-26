@@ -11,14 +11,18 @@ namespace NeuralNetwork.Interfaces
 	/// </summary>
 	public interface INetwork
 	{
-		ILayer InputLayer { get; set; }
-		ILayer HiddenLayer { get; set; }
-		ILayer OutputLayer { get; set; }
-		
+		int NrInputNeurons { get; }
+		int NrHiddenNeurons { get; }
+		int NrOutputNeurons { get; }
+
+		double LearningRate { get; }
+		double Momentum { get; }
+		double GoalErrorRate { get; }
+
 		void FeedForward();
 
 		void BackPropagate();
 
-		void CalculateError();
+		double CalculateError();
 	}
 }
