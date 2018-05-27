@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfusionMatrixDrawer.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageLoader.cs" />
     <Compile Include="Layers.cs" />

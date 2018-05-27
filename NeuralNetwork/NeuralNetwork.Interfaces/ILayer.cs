@@ -10,9 +10,6 @@ namespace NeuralNetwork.Interfaces
 	{
 		//Neurons in this layer
 		double[] NeuronValues { get; }
-
-		//initialize in constructor
-		int NumberOfNeurons { get; }
 	}
 
 	public interface IParentLayer : ILayer

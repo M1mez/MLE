@@ -1,26 +1,44 @@
-﻿using NeuralNetwork.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using NeuralNetwork.Interfaces;
 using NeuralNetwork.StaticFunctions;
 
 namespace NeuralNetwork
 {
 	public abstract class Layer : ILayer
 	{
-		public double[] NeuronValues { get; protected set; }
-
-		public int NumberOfNeurons { get; protected set; }
+		public double[] NeuronValues { get; set; }
 	}
 
 	public class InputLayer : Layer, IParentLayer
 	{
-		public InputLayer(int size)
+		private IChildLayer _childLayer;
+
+		public InputLayer(int numberOfNeurons)
 		{
-			NumberOfNeurons = size;
+			NeuronValues = new double[numberOfNeurons];
+
+			SynapseWeights = new double[numberOfNeurons][];
+			SynapseWeights_Before = new double[numberOfNeurons][];
+			NeuronBiasses = new double[numberOfNeurons];
+			BiasWeights = new double[numberOfNeurons];
 		}
 
-		public IChildLayer ChildLayer { get; set; }
+		public IChildLayer ChildLayer
+		{
+			get => _childLayer;
+			set
+			{
+				_childLayer = value;
+				for (int i = 0; i < NeuronValues.Length; i++)
+				{
+					SynapseWeights[i] = new double[_childLayer.NeuronValues.Length];
+					SynapseWeights_Before[i] = new double[_childLayer.NeuronValues.Length];
+				}
+			}
+		}
 
 		public double[][] SynapseWeights { get; set; }
 		public double[][] SynapseWeights_Before { get; set; }
@@ -32,16 +50,16 @@ namespace NeuralNetwork
 		public void AdjustWeights(double learningRate, double momentum)
 		{
 			double dw = 0.0;
-			for (int i = 0; i < NumberOfNeurons; i++)
+			for (int i = 0; i < NeuronValues.Length; i++)
 			{
-				for (int j = 0; j < ChildLayer.NumberOfNeurons; j++)
+				for (int j = 0; j < ChildLayer.NeuronValues.Length; j++)
 				{
 					dw = learningRate * ChildLayer.Errors[j] * NeuronValues[i];
 					SynapseWeights[i][j] += dw + momentum * SynapseWeights_Before[i][j];
 					SynapseWeights_Before[i][j] = dw;
 				}
 			}
-			for (int j = 0; j < ChildLayer.NumberOfNeurons; j++)
+			for (int j = 0; j < ChildLayer.NeuronValues.Length; j++)
 			{
 				BiasWeights[j] += (learningRate * ChildLayer.Errors[j] * NeuronBiasses[j]);
 			}
@@ -50,12 +68,34 @@ namespace NeuralNetwork
 
 	public class HiddenLayer : Layer, IParentLayer, IChildLayer
 	{
-		public HiddenLayer()
-		{
+		private IChildLayer _childLayer;
 
+		public HiddenLayer(int numberOfNeurons)
+		{
+			NeuronValues = new double[numberOfNeurons];
+
+			SynapseWeights = new double[numberOfNeurons][];
+			SynapseWeights_Before = new double[numberOfNeurons][];
+			NeuronBiasses = new double[numberOfNeurons];
+			BiasWeights = new double[numberOfNeurons];
+
+			Errors = new double[numberOfNeurons];
 		}
 
-		public IChildLayer ChildLayer { get; set; }
+		public IChildLayer ChildLayer
+		{
+			get => _childLayer;
+			set
+			{
+				_childLayer = value;
+				for (int i = 0; i < NeuronValues.Length; i++)
+				{
+					SynapseWeights[i] = new double[_childLayer.NeuronValues.Length];
+					SynapseWeights_Before[i] = new double[_childLayer.NeuronValues.Length];
+				}
+			}
+		}
+
 		public IParentLayer ParentLayer { get; set; }
 
 		public double[][] SynapseWeights { get; set; }
@@ -68,16 +108,16 @@ namespace NeuralNetwork
 		public void AdjustWeights(double learningRate, double momentum)
 		{
 			double dw = 0.0;
-			for (int i = 0; i < NumberOfNeurons; i++)
+			for (int i = 0; i < NeuronValues.Length; i++)
 			{
-				for (int j = 0; j < ChildLayer.NumberOfNeurons; j++)
+				for (int j = 0; j < ChildLayer.NeuronValues.Length; j++)
 				{
 					dw = learningRate * ChildLayer.Errors[j] * NeuronValues[i];
 					SynapseWeights[i][j] += dw + momentum * SynapseWeights_Before[i][j];
 					SynapseWeights_Before[i][j] = dw;
 				}
 			}
-			for (int j = 0; j < ChildLayer.NumberOfNeurons; j++)
+			for (int j = 0; j < ChildLayer.NeuronValues.Length; j++)
 			{
 				BiasWeights[j] += (learningRate * ChildLayer.Errors[j] * NeuronBiasses[j]);
 			}
@@ -86,10 +126,10 @@ namespace NeuralNetwork
 		public void CalculateErrors()
 		{
 			double sum = 0.0;
-			for (int i = 0; i < NumberOfNeurons; i++)
+			for (int i = 0; i < NeuronValues.Length; i++)
 			{
 				sum = 0.0;
-				for (int j = 0; j < ChildLayer.NumberOfNeurons; j++)
+				for (int j = 0; j < ChildLayer.NeuronValues.Length; j++)
 				{
 					sum += ChildLayer.Errors[j] * SynapseWeights[i][j];
 				}
@@ -100,10 +140,10 @@ namespace NeuralNetwork
 		public void CalculateNeuronValues()
 		{
 			double x = 0.0;
-			for (int j = 0; j < NumberOfNeurons; j++)
+			for (int j = 0; j < NeuronValues.Length; j++)
 			{
 				x = 0.0;
-				for (int i = 0; i < ParentLayer.NumberOfNeurons; i++)
+				for (int i = 0; i < ParentLayer.NeuronValues.Length; i++)
 				{
 					x += ParentLayer.NeuronValues[i] * ParentLayer.SynapseWeights[i][j];
 				}
@@ -116,6 +156,14 @@ namespace NeuralNetwork
 
 	public class OutputLayer : Layer, IChildLayer
 	{
+		public OutputLayer(int numberOfNeurons)
+		{
+			NeuronValues = new double[numberOfNeurons];
+			DesiredNeuronValues = new double[numberOfNeurons];
+
+			Errors = new double[numberOfNeurons];
+		}
+
 		public IParentLayer ParentLayer { get; set; }
 
 		public double[] DesiredNeuronValues { get; set; }
@@ -124,7 +172,7 @@ namespace NeuralNetwork
 
 		public void CalculateErrors()
 		{
-			for (int i = 0; i < NumberOfNeurons; i++)
+			for (int i = 0; i < Errors.Length; i++)
 			{
 				Errors[i] = (DesiredNeuronValues[i] - NeuronValues[i]) * NeuronValues[i] * (1.0 - NeuronValues[i]);
 			}
@@ -133,15 +181,16 @@ namespace NeuralNetwork
 		public void CalculateNeuronValues()
 		{
 			double x = 0.0;
-			for (int j = 0; j < NumberOfNeurons; j++)
+			for (int j = 0; j < NeuronValues.Length; j++)
 			{
 				x = 0.0;
-				for (int i = 0; i < ParentLayer.NumberOfNeurons; i++)
+				for (int i = 0; i < ParentLayer.NeuronValues.Length; i++)
 				{
 					x += ParentLayer.NeuronValues[i] * ParentLayer.SynapseWeights[i][j];
 				}
 				x += ParentLayer.NeuronBiasses[j] * ParentLayer.BiasWeights[j];
-				NeuronValues[j] = x;
+
+				NeuronValues[j] = ActivationFunctions.Sigmoid(x);
 			}
 		}
 	}
