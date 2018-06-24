@@ -44,5 +44,11 @@
     <Compile Include="ILayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeuralNetwork.StaticFunctions\NeuralNetwork.StaticFunctions.csproj">
+      <Project>{69571e42-4553-4515-bc48-26cf70cb06ef}</Project>
+      <Name>NeuralNetwork.StaticFunctions</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

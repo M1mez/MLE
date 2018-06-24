@@ -5,14 +5,18 @@ using System.Text;
 namespace NeuralNetwork
 {
 	/// <summary>
-	/// Image of the MNIST Database of handwritten digits
+	/// Image of the MNIST Database of handwritten digits.
+	/// 
+	/// Code written by Alexander Hofmann, adapted from Java to C#.
 	/// </summary>
 	public class Image
 	{
 		public int Label;
 		public double[] Data;
 
-		public Image(int label, byte[] data)
+		private bool isPrintable = false;
+
+		public Image(int label, byte[] data, bool useOtsu)
 		{
 			this.Label = label;
 
@@ -22,11 +26,17 @@ namespace NeuralNetwork
 			{
 				this.Data[i] = data[i] & 0xFF; //convert to unsigned
 			}
-			otsu();
+
+			if (useOtsu)
+			{
+				otsu();
+				isPrintable = true;
+			}
 		}
 		
 		public override String ToString()
 		{
+			if (!isPrintable) Console.WriteLine("ERROR: Only Otsu-transformed pictures may be drawn");
 			StringBuilder sb = new StringBuilder();
 			sb.Append(Label);
 			sb.Append(" = ");

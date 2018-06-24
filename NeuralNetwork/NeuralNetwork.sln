@@ -3,25 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork.StaticFunctions", "NN_ActivationFunctions\NeuralNetwork.StaticFunctions.csproj", "{8BC97118-FC1B-420E-A3B4-88FB7486E140}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork.Interfaces", "NeuralNetwork.Interfaces\NeuralNetwork.Interfaces.csproj", "{103214C4-A600-43C6-8A3A-06275D8977E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork.csproj", "{944B5E96-7B84-401C-B33F-EA1706228AEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork.StaticFunctions", "NeuralNetwork.StaticFunctions\NeuralNetwork.StaticFunctions.csproj", "{69571E42-4553-4515-BC48-26CF70CB06EF}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8BC97118-FC1B-420E-A3B4-88FB7486E140}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BC97118-FC1B-420E-A3B4-88FB7486E140}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BC97118-FC1B-420E-A3B4-88FB7486E140}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BC97118-FC1B-420E-A3B4-88FB7486E140}.Release|Any CPU.Build.0 = Release|Any CPU
 		{103214C4-A600-43C6-8A3A-06275D8977E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{103214C4-A600-43C6-8A3A-06275D8977E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{103214C4-A600-43C6-8A3A-06275D8977E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,11 +23,18 @@ Global
 		{944B5E96-7B84-401C-B33F-EA1706228AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{944B5E96-7B84-401C-B33F-EA1706228AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{944B5E96-7B84-401C-B33F-EA1706228AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69571E42-4553-4515-BC48-26CF70CB06EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69571E42-4553-4515-BC48-26CF70CB06EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69571E42-4553-4515-BC48-26CF70CB06EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69571E42-4553-4515-BC48-26CF70CB06EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {94954CE3-C378-4F31-BB7C-9221BA9D5843}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

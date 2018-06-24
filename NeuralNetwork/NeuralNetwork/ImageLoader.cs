@@ -5,7 +5,13 @@ using System.Text;
 
 namespace NeuralNetwork
 {
-	/**  Converted from Java to C# **/
+	/**
+	 * Created by IntelliJ IDEA.
+	 * User: vivin
+	 * Date: 11/11/11
+	 * Time: 10:07 AM
+	 *
+	 *  Converted from Java to C# **/
 	public static class ImageLoader
 	{
 		/** the following constants are defined as per the values described at http://yann.lecun.com/exdb/mnist/ **/
@@ -29,7 +35,7 @@ namespace NeuralNetwork
 		private static readonly int IMAGE_OFFSET = 16;
 		private static readonly int IMAGE_SIZE = ROWS * COLUMNS;
 
-		public static List<Image> LoadImages(String labelFileName, String imageFileName)
+		public static List<Image> LoadImages(String labelFileName, String imageFileName, bool useOtsu)
 		{
 			List<Image> images = new List<Image>();
 
@@ -75,7 +81,7 @@ namespace NeuralNetwork
 				byte[] imageData = new Byte[IMAGE_SIZE];
 				Buffer.BlockCopy(imageBytes, ((i * IMAGE_SIZE) + IMAGE_OFFSET), imageData, 0, IMAGE_SIZE);
 
-				images.Add(new Image(label, imageData));
+				images.Add(new Image(label, imageData, useOtsu));
 			}
 
 			return images;

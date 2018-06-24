@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{944B5E96-7B84-401C-B33F-EA1706228AEC}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>NeuralNetwork</RootNamespace>
-    <AssemblyName>NeuralNetwork</AssemblyName>
+    <ProjectGuid>{69571E42-4553-4515-BC48-26CF70CB06EF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NeuralNetwork.StaticFunctions</RootNamespace>
+    <AssemblyName>NeuralNetwork.StaticFunctions</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -42,30 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfusionMatrixDrawer.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="ImageLoader.cs" />
-    <Compile Include="Layers.cs" />
-    <Compile Include="Network.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="StaticFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="ImageData\t10k-images-idx3-ubyte.dat" />
-    <None Include="ImageData\t10k-labels-idx1-ubyte.dat" />
-    <None Include="ImageData\train-images-idx3-ubyte.dat" />
-    <None Include="ImageData\train-labels-idx1-ubyte.dat" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NeuralNetwork.Interfaces\NeuralNetwork.Interfaces.csproj">
-      <Project>{103214c4-a600-43c6-8a3a-06275d8977e1}</Project>
-      <Name>NeuralNetwork.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NeuralNetwork.StaticFunctions\NeuralNetwork.StaticFunctions.csproj">
-      <Project>{69571e42-4553-4515-bc48-26cf70cb06ef}</Project>
-      <Name>NeuralNetwork.StaticFunctions</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

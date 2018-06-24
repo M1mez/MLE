@@ -7,13 +7,17 @@ using NeuralNetwork.StaticFunctions;
 
 namespace NeuralNetwork
 {
-	public class Network : INetwork
+	/// <summary
+	/// Neural Network for the MNIST database 
+	/// </summary>
+	public class Network : INetwork<Image>
 	{
 		public Network(int nrInputNeurons, int nrHiddenNeurons, int nrOutputNeurons, double learningRate, double momentum, double goalErrorRate)
 		{
 			NrInputNeurons = nrInputNeurons;
 			NrHiddenNeurons = nrHiddenNeurons;
 			NrOutputNeurons = nrOutputNeurons;
+
 			LearningRate = learningRate;
 			Momentum = momentum;
 			GoalErrorRate = goalErrorRate;
@@ -35,13 +39,21 @@ namespace NeuralNetwork
 		public double Momentum { get; }
 		public double GoalErrorRate { get; }
 
-		public void Initialize()
+		public void Initialize(
+			ActivationFunctions hiddenLayerActFunc = ActivationFunctions.Sigmoid,
+			ActivationFunctions outPutLayerActFunc = ActivationFunctions.Sigmoid)
 		{
+			//assign Layer dependencies
 			InputLayer.ChildLayer = HiddenLayer;
 			HiddenLayer.ParentLayer = InputLayer;
 			HiddenLayer.ChildLayer = OutputLayer;
 			OutputLayer.ParentLayer = HiddenLayer;
 
+			//set Activation Functions
+			HiddenLayer.ActivationFunction = hiddenLayerActFunc;
+			OutputLayer.ActivationFunction = outPutLayerActFunc;
+
+			//Assign random values to the Weights and set the bias
 			for (int i = 0; i < NrInputNeurons; i++)
 			{
 				InputLayer.NeuronBiasses[i] = 1;
@@ -63,21 +75,24 @@ namespace NeuralNetwork
 			}
 		}
 
-		public void Learn(List<Image> Images)
+		//optionally provide test-images to print a confusion matrix after each Cycle. Helps to find sweet spot between over and underfitting.
+		public void Learn(List<Image> Images, List<Image> TestImages = null)
 		{
 			Stopwatch watch = new Stopwatch();
-			int nrOfRuns = 1;
+			int nrOfRuns = 0;
 			double networkError = 0.0;
-			
+
+			//Train Network until desired error rate is reached
 			do
 			{
-
-				int networkErrorMeanCount = 0;
 				double networkErrorSum = 0.0;
-
+				nrOfRuns++;
 				watch.Start();
+
+				//For all Images in the training set
 				for (int i = 0; i < Images.Count; i++)
 				{
+					//Set Image
 					InputLayer.NeuronValues = Images[i].Data;
 					for (int j = 0; j < NrOutputNeurons; j++)
 					{
@@ -85,22 +100,30 @@ namespace NeuralNetwork
 							OutputLayer.DesiredNeuronValues[j] = 1.0;
 						else OutputLayer.DesiredNeuronValues[j] = 0.0;
 					}
+
+					//Calculate values and adjust weights according to error.
 					this.FeedForward();
 					this.BackPropagate();
+
 					networkErrorSum += CalculateError();
-					networkErrorMeanCount++;
-					networkError = networkErrorSum / networkErrorMeanCount;
+					networkError = networkErrorSum / (i + 1);
 				}
 				watch.Stop();
 
-				Console.Write("Error Rate after generation {0}: ", nrOfRuns, networkError);
+				//Print error rate and time elapsed for this epoch
+				Console.Write("Error rate after epoch {0}: ", nrOfRuns, networkError);
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine("{0}", networkError);
 				Console.ForegroundColor = ConsoleColor.Gray;
 
-				Console.WriteLine("Time Elapsed: {1}", nrOfRuns, watch.Elapsed.ToString());
+				Console.WriteLine("Time elapsed: {1}", nrOfRuns, watch.Elapsed.ToString());
 				Console.WriteLine();
-				nrOfRuns++;
+
+				if (TestImages != null)
+				{
+					ConfusionMatrixDrawer.Draw(Test(TestImages));
+				}
+
 			} while (networkError > GoalErrorRate);
 		}
 
@@ -130,6 +153,12 @@ namespace NeuralNetwork
 			return classificationMatrix;
 		}
 
+		public void FeedForward()
+		{
+			HiddenLayer.CalculateNeuronValues();
+			OutputLayer.CalculateNeuronValues();
+		}
+
 		public void BackPropagate()
 		{
 			OutputLayer.CalculateErrors();
@@ -147,12 +176,6 @@ namespace NeuralNetwork
 			}
 			error = error / OutputLayer.NeuronValues.Length;
 			return error;
-		}
-
-		public void FeedForward()
-		{
-			HiddenLayer.CalculateNeuronValues();
-			OutputLayer.CalculateNeuronValues();
 		}
 	}
 }
